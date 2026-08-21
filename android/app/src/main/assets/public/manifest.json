@@ -1,0 +1,24 @@
+{
+  "short_name": "SKY",
+  "name": "SKY — Open-Source Smartphone & Custom ROM Ecosystem",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192 512x512",
+      "purpose": "any"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#1C1B17",
+  "theme_color": "#FDE694",
+  "display": "standalone",
+  "orientation": "portrait",
+  "description": "SKY is an open-source smartphone and custom ROM ecosystem. Explore official AOSP builds, kernel updates, device specs, and community maintainers."
+}

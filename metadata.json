@@ -1,0 +1,8 @@
+{
+  "name": "Remix SKY app",
+  "description": "SKY — Open-source smartphone and custom ROM ecosystem. Android application and web platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

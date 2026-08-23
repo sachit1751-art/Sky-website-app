@@ -2,7 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { App as CapApp } from '@capacitor/app';
 import { Network } from '@capacitor/network';
-import { isNative, configureStatusBar, hideSplashScreen, triggerHaptic } from '../lib/capacitor';
+import { SafeArea } from 'capacitor-plugin-safe-area';
+import { isNative, configureStatusBar, hideSplashScreen, triggerHaptic, initializeSafeArea, applySafeAreaToDom } from '../lib/capacitor';
 import { useTheme } from '../context/ThemeContext';
 import { useToast } from '../context/ToastContext';
 
@@ -13,12 +14,31 @@ export const AndroidNativeBridge: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const lastBackPressTimeRef = useRef<number>(0);
+  const routeHistoryStackRef = useRef<string[]>([]);
 
-  // 1. Sync Status Bar theme & hide initial Splash Screen on first mount
+  // Track location changes in our custom route navigation stack
+  useEffect(() => {
+    const currentPath = location.pathname + location.search + location.hash;
+    const stack = routeHistoryStackRef.current;
+    if (stack.length === 0 || stack[stack.length - 1] !== currentPath) {
+      stack.push(currentPath);
+      // Cap stack to reasonable size to prevent unbounded memory growth
+      if (stack.length > 50) {
+        stack.shift();
+      }
+    }
+  }, [location.pathname, location.search, location.hash]);
+
+  // 1. Sync Status Bar theme, Safe Area insets & hide initial Splash Screen
   useEffect(() => {
     if (!isNative) return;
 
+    // Apply status bar styling
     configureStatusBar(isDark);
+
+    // Initialize Safe Area measurements for device notch / camera cutout
+    initializeSafeArea();
+
     const timer = setTimeout(() => {
       hideSplashScreen();
     }, 150);
@@ -26,49 +46,41 @@ export const AndroidNativeBridge: React.FC = () => {
     return () => clearTimeout(timer);
   }, [isDark]);
 
-  // 2. Hardware / Gesture Back Button Handling
+  // 2. Safe Area Inset Change Listener (orientation changes, foldables, multi-window mode)
   useEffect(() => {
     if (!isNative) return;
 
-    const backListenerPromise = CapApp.addListener('backButton', ({ canGoBack }) => {
-      // Check if any open modals exist in DOM to dismiss first
-      const openModalCloseBtn = document.querySelector<HTMLButtonElement>(
-        '[data-modal-close="true"], .modal-close-btn, button[aria-label="Close modal"], button[aria-label="Close"]'
-      );
-      
-      if (openModalCloseBtn) {
-        triggerHaptic('light');
-        openModalCloseBtn.click();
-        return;
-      }
+    let listenerHandle: { remove: () => void } | null = null;
 
-      // If we are on a nested route (e.g. /roms, /device, /team, /community, /admin/...), navigate back
-      const isRoot = location.pathname === '/' || location.pathname === '';
-      if (!isRoot) {
-        triggerHaptic('selection');
-        navigate(-1);
-        return;
-      }
+    try {
+      SafeArea.addListener('safeAreaChanged', (data) => {
+        if (data && data.insets) {
+          applySafeAreaToDom(data.insets);
+        }
+      }).then((handle) => {
+        listenerHandle = handle;
+      }).catch((err) => {
+        console.warn('Safe area listener failed to attach:', err);
+      });
+    } catch (err) {
+      // Non-blocking fallback
+    }
 
-      // If at root page: double-tap back within 2 seconds to exit
-      const now = Date.now();
-      if (now - lastBackPressTimeRef.current < 2000) {
-        triggerHaptic('heavy');
-        CapApp.exitApp();
-      } else {
-        lastBackPressTimeRef.current = now;
-        triggerHaptic('light');
-        showToast({
-          title: 'Press back again to exit SKY',
-          type: 'info'
-        });
-      }
-    });
+    const handleResizeOrOrientation = () => {
+      initializeSafeArea();
+    };
+
+    window.addEventListener('resize', handleResizeOrOrientation);
+    window.addEventListener('orientationchange', handleResizeOrOrientation);
 
     return () => {
-      backListenerPromise.then((handle) => handle.remove());
+      if (listenerHandle) {
+        listenerHandle.remove();
+      }
+      window.removeEventListener('resize', handleResizeOrOrientation);
+      window.removeEventListener('orientationchange', handleResizeOrOrientation);
     };
-  }, [location.pathname, navigate, showToast]);
+  }, []);
 
   // 3. Deep Linking Listener (e.g. sky://roms or https://sky-roms.vercel.app/device)
   useEffect(() => {

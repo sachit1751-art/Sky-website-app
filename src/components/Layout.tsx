@@ -48,7 +48,10 @@ export const Layout: React.FC = () => {
       <Navbar />
 
       {/* Main Container */}
-      <main className="flex-grow flex flex-col relative z-10 pt-20 sm:pt-24 pb-24 md:pb-0">
+      <main 
+        className="flex-grow flex flex-col relative z-10 pb-24 md:pb-0 pl-safe pr-safe"
+        style={{ paddingTop: 'calc(max(var(--safe-area-top, 0px), env(safe-area-inset-top, 0px)) + 5rem)' }}
+      >
         <BreadcrumbNav />
         <Outlet />
       </main>

@@ -24,6 +24,12 @@ const config: CapacitorConfig = {
       overlaysWebView: true,
       style: 'DEFAULT',
       backgroundColor: '#00000000'
+    },
+    SafeArea: {
+      enabled: true,
+      customColorsForSystemBars: true,
+      statusBarColor: '#00000000',
+      navigationBarColor: '#00000000'
     }
   },
   android: {

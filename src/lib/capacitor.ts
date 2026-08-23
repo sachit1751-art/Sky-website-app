@@ -5,9 +5,48 @@ import { SplashScreen } from '@capacitor/splash-screen';
 import { Share } from '@capacitor/share';
 import { Network, ConnectionStatus } from '@capacitor/network';
 import { Preferences } from '@capacitor/preferences';
+import { SafeArea, SafeAreaInsets } from 'capacitor-plugin-safe-area';
 
 export const isNative = Capacitor.isNativePlatform();
 export const platform = Capacitor.getPlatform();
+
+export interface DeviceSafeArea {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}
+
+/**
+ * Apply safe area insets to root DOM CSS custom properties
+ */
+export function applySafeAreaToDom(insets: DeviceSafeArea) {
+  if (typeof document === 'undefined') return;
+  const root = document.documentElement;
+  root.style.setProperty('--safe-area-top', `${insets.top}px`);
+  root.style.setProperty('--safe-area-bottom', `${insets.bottom}px`);
+  root.style.setProperty('--safe-area-left', `${insets.left}px`);
+  root.style.setProperty('--safe-area-right', `${insets.right}px`);
+}
+
+/**
+ * Initialize system safe areas and notch/cutout insets
+ */
+export async function initializeSafeArea(): Promise<DeviceSafeArea> {
+  const defaultInsets: DeviceSafeArea = { top: 0, bottom: 0, left: 0, right: 0 };
+  if (!isNative) return defaultInsets;
+
+  try {
+    const data = await SafeArea.getSafeAreaInsets();
+    if (data && data.insets) {
+      applySafeAreaToDom(data.insets);
+      return data.insets;
+    }
+  } catch (err) {
+    console.warn('Could not fetch native safe area insets:', err);
+  }
+  return defaultInsets;
+}
 
 /**
  * Trigger subtle, high-quality native haptic feedback
@@ -57,7 +96,7 @@ export async function configureStatusBar(isDark: boolean) {
     if (platform === 'android') {
       await StatusBar.setOverlaysWebView({ overlay: true });
       await StatusBar.setBackgroundColor({
-        color: isDark ? '#12110D' : '#FFF8E1'
+        color: isDark ? '#141416' : '#FFF8E1'
       });
     }
   } catch (err) {

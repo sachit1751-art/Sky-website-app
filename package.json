@@ -14,6 +14,7 @@
     "build:android": "vite build && npx cap sync android"
   },
   "dependencies": {
+    "@capacitor-community/safe-area": "^8.0.1",
     "@capacitor/android": "^8.5.0",
     "@capacitor/app": "^8.1.1",
     "@capacitor/core": "^8.5.0",
@@ -34,6 +35,7 @@
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^5.0.4",
     "autoprefixer": "^10.4.21",
+    "capacitor-plugin-safe-area": "^5.0.1",
     "dotenv": "^17.2.3",
     "esbuild": "^0.25.0",
     "express": "^4.21.2",

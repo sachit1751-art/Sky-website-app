@@ -133,7 +133,10 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <header className="fixed top-2.5 sm:top-5 inset-x-0 z-50 flex justify-center px-3 sm:px-6 pointer-events-none transition-all duration-300 will-change-transform">
+      <header 
+        className="fixed inset-x-0 z-50 flex justify-center px-3 sm:px-6 pointer-events-none transition-all duration-300 will-change-transform"
+        style={{ top: 'calc(max(var(--safe-area-top, 0px), env(safe-area-inset-top, 0px)) + 0.625rem)' }}
+      >
         <div
           className={`pointer-events-auto w-full max-w-6xl rounded-full transition-all duration-300 flex items-center justify-between px-2.5 sm:px-4 lg:px-6 py-2 sm:py-2.5 border transform-gpu gap-1.5 lg:gap-4 ${headerBgClass} ${
             scrolled
@@ -288,7 +291,8 @@ export const Navbar: React.FC = () => {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.98 }}
                 transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                className={`md:hidden fixed top-[66px] sm:top-20 inset-x-3 sm:inset-x-6 max-w-md mx-auto max-h-[calc(100dvh-80px)] overflow-y-auto overscroll-contain ${drawerBgClass} border border-[#EBE4CF] dark:border-[#36342A] rounded-3xl p-3.5 sm:p-5 flex flex-col gap-3 shadow-2xl pointer-events-auto origin-top transform-gpu z-50 will-change-transform`}
+                style={{ top: 'calc(max(var(--safe-area-top, 0px), env(safe-area-inset-top, 0px)) + 4.25rem)' }}
+                className={`md:hidden fixed inset-x-3 sm:inset-x-6 max-w-md mx-auto max-h-[calc(100dvh-80px)] overflow-y-auto overscroll-contain ${drawerBgClass} border border-[#EBE4CF] dark:border-[#36342A] rounded-3xl p-3.5 sm:p-5 flex flex-col gap-3 shadow-2xl pointer-events-auto origin-top transform-gpu z-50 will-change-transform`}
               >
                 {/* Search Quick Action inside Menu */}
                 <button

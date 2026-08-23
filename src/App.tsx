@@ -300,6 +300,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { SessionManager } from './components/admin/SessionManager';
 import { GlobalKeyboardShortcuts } from './components/GlobalKeyboardShortcuts';
 import { AndroidNativeBridge } from './components/AndroidNativeBridge';
+import { AndroidBackButtonHandler } from './components/AndroidBackButtonHandler';
 
 export default function App() {
   return (
@@ -313,6 +314,7 @@ export default function App() {
                   <SessionManager />
                   <BrowserRouter>
                     <AndroidNativeBridge />
+                    <AndroidBackButtonHandler />
                     <GlobalKeyboardShortcuts />
                     <AnimatedRoutes />
                   </BrowserRouter>

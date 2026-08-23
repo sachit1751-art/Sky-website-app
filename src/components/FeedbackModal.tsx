@@ -339,6 +339,8 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = () => {
                   <button
                     onClick={() => !submitting && setIsOpen(false)}
                     disabled={submitting}
+                    data-modal-close="true"
+                    aria-label="Close modal"
                     className="w-9 h-9 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center text-[#787567] dark:text-[#BDB8A4] hover:text-[#121212] dark:hover:text-[#F4EFE6] transition-colors cursor-pointer"
                   >
                     <X size={18} />

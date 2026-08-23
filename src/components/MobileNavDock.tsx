@@ -97,8 +97,15 @@ export const MobileNavDock: React.FC<MobileNavDockProps> = ({
           animate={{ y: 0, opacity: 1, scale: 1 }}
           exit={{ y: 80, opacity: 0, scale: 0.95 }}
           transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-          className={`${dockBgClass} md:hidden w-[calc(100%-24px)] max-w-sm mx-auto mb-3 sm:mb-4 border border-[#EBE4CF] dark:border-[#36342A] rounded-full p-1 sm:p-1.5 flex items-center justify-between gap-1 pointer-events-auto shadow-2xl will-change-transform`}
-          style={{ position: 'fixed', zIndex: 9999, bottom: 0, left: 0, right: 0, willChange: 'transform' }}
+          className={`${dockBgClass} md:hidden w-[calc(100%-24px)] max-w-sm mx-auto border border-[#EBE4CF] dark:border-[#36342A] rounded-full p-1 sm:p-1.5 flex items-center justify-between gap-1 pointer-events-auto shadow-2xl will-change-transform`}
+          style={{ 
+            position: 'fixed', 
+            zIndex: 9999, 
+            bottom: 'max(0.75rem, calc(max(var(--safe-area-bottom, 0px), env(safe-area-inset-bottom, 0px)) + 0.5rem))', 
+            left: 0, 
+            right: 0, 
+            willChange: 'transform' 
+          }}
         >
           {items.map((item) => {
             const isActive =

@@ -337,6 +337,9 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
 
         {/* Command Palette Card */}
         <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Global Search"
           initial={{ opacity: 0, scale: 0.96, y: -10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.96, y: -10 }}
@@ -363,9 +366,17 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
                 <X className="w-4 h-4" />
               </button>
             )}
-            <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold bg-[#EBE4CF]/70 dark:bg-[#36342A]/70 text-[#787567] dark:text-[#BDB8A4] border border-[#EBE4CF] dark:border-[#36342A]">
-              ESC
-            </kbd>
+            <button
+              onClick={onClose}
+              data-modal-close="true"
+              aria-label="Close search"
+              className="p-1.5 rounded-full text-[#787567] hover:text-[#121212] dark:text-[#BDB8A4] dark:hover:text-[#F4EFE6] hover:bg-[#EBE4CF]/60 dark:hover:bg-[#36342A]/60 transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4 sm:hidden" />
+              <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold bg-[#EBE4CF]/70 dark:bg-[#36342A]/70 text-[#787567] dark:text-[#BDB8A4] border border-[#EBE4CF] dark:border-[#36342A]">
+                ESC
+              </kbd>
+            </button>
           </div>
 
           {/* Category Filter Pills */}

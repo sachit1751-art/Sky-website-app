@@ -37,7 +37,7 @@ export const RomCompareModal: React.FC<RomCompareModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-3 sm:p-6 bg-black/80 animate-in fade-in duration-200 overflow-y-auto">
+    <div role="dialog" aria-modal="true" aria-label="ROM Comparison Tool" className="fixed inset-0 z-[110] flex items-center justify-center p-3 sm:p-6 bg-black/80 animate-in fade-in duration-200 overflow-y-auto">
       <div className="relative w-full max-w-5xl bg-[#1C1B17] border border-[#36342A] rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col text-[#FAF3DD]">
         
         {/* Header */}
@@ -53,6 +53,8 @@ export const RomCompareModal: React.FC<RomCompareModalProps> = ({
           </div>
           <button
             onClick={onClose}
+            data-modal-close="true"
+            aria-label="Close comparison"
             className="p-2 text-[#9C9888] hover:text-[#FAF3DD] rounded-xl hover:bg-white/5 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />

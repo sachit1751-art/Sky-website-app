@@ -301,6 +301,7 @@ import { SessionManager } from './components/admin/SessionManager';
 import { GlobalKeyboardShortcuts } from './components/GlobalKeyboardShortcuts';
 import { AndroidNativeBridge } from './components/AndroidNativeBridge';
 import { AndroidBackButtonHandler } from './components/AndroidBackButtonHandler';
+import { ShakeRefreshHandler } from './components/ShakeRefreshHandler';
 
 export default function App() {
   return (
@@ -312,6 +313,7 @@ export default function App() {
               <AuthProvider>
                 <DataProvider>
                   <SessionManager />
+                  <ShakeRefreshHandler />
                   <BrowserRouter>
                     <AndroidNativeBridge />
                     <AndroidBackButtonHandler />

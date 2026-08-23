@@ -5,6 +5,7 @@ import { SplashScreen } from '@capacitor/splash-screen';
 import { Share } from '@capacitor/share';
 import { Network, ConnectionStatus } from '@capacitor/network';
 import { Preferences } from '@capacitor/preferences';
+import { Motion } from '@capacitor/motion';
 import { SafeArea, SafeAreaInsets } from 'capacitor-plugin-safe-area';
 
 export const isNative = Capacitor.isNativePlatform();
@@ -348,7 +349,110 @@ export async function getNetworkStatus(): Promise<ConnectionStatus> {
   };
 }
 
+export interface ShakeOptions {
+  threshold?: number; // Acceleration change threshold (default: 20 m/s^2)
+  debounceMs?: number; // Minimum time between shake events (default: 1500ms)
+}
+
+/**
+ * Listen for physical device shake gestures using @capacitor/motion accelerometer
+ * with fallback to web DeviceMotionEvent and custom event dispatching.
+ */
+export function listenToDeviceShake(
+  onShake: () => void,
+  options: ShakeOptions = {}
+): () => void {
+  const threshold = options.threshold ?? 20;
+  const debounceMs = options.debounceMs ?? 1500;
+
+  let lastX: number | null = null;
+  let lastY: number | null = null;
+  let lastZ: number | null = null;
+  let lastShakeTime = 0;
+  let isCleanedUp = false;
+
+  const processAcceleration = (x: number, y: number, z: number) => {
+    const now = Date.now();
+    if (lastX !== null && lastY !== null && lastZ !== null) {
+      const deltaX = Math.abs(x - lastX);
+      const deltaY = Math.abs(y - lastY);
+      const deltaZ = Math.abs(z - lastZ);
+      const totalDelta = deltaX + deltaY + deltaZ;
+
+      // Magnitude of sudden vector change exceeds shake threshold
+      if (totalDelta > threshold && now - lastShakeTime > debounceMs) {
+        lastShakeTime = now;
+        onShake();
+      }
+    }
+
+    lastX = x;
+    lastY = y;
+    lastZ = z;
+  };
+
+  let motionListenerHandle: { remove: () => void } | null = null;
+
+  if (isNative) {
+    Motion.addListener('accel', (event) => {
+      if (isCleanedUp) return;
+      const accel = event.acceleration || event.accelerationIncludingGravity;
+      if (accel) {
+        processAcceleration(accel.x || 0, accel.y || 0, accel.z || 0);
+      }
+    }).then((handle) => {
+      if (isCleanedUp) {
+        handle.remove();
+      } else {
+        motionListenerHandle = handle;
+      }
+    }).catch((err) => {
+      console.warn('[listenToDeviceShake] Capacitor Motion addListener failed:', err);
+    });
+  } else if (typeof window !== 'undefined') {
+    // Web fallback for mobile browser devicemotion
+    const handleDeviceMotion = (event: DeviceMotionEvent) => {
+      if (isCleanedUp) return;
+      const accel = event.acceleration || event.accelerationIncludingGravity;
+      if (accel && accel.x !== null && accel.y !== null && accel.z !== null) {
+        processAcceleration(accel.x || 0, accel.y || 0, accel.z || 0);
+      }
+    };
+
+    window.addEventListener('devicemotion', handleDeviceMotion as any);
+
+    // Custom testing event for web browser preview
+    const handleCustomShake = () => {
+      if (isCleanedUp) return;
+      const now = Date.now();
+      if (now - lastShakeTime > debounceMs) {
+        lastShakeTime = now;
+        onShake();
+      }
+    };
+
+    window.addEventListener('sky:shake', handleCustomShake);
+
+    return () => {
+      isCleanedUp = true;
+      window.removeEventListener('devicemotion', handleDeviceMotion as any);
+      window.removeEventListener('sky:shake', handleCustomShake);
+      if (motionListenerHandle) {
+        motionListenerHandle.remove();
+      }
+    };
+  }
+
+  return () => {
+    isCleanedUp = true;
+    if (motionListenerHandle) {
+      motionListenerHandle.remove();
+    }
+  };
+}
+
 // Re-export hardware back button hook and registration utilities
 export { registerBackButtonHandler, useAndroidBackButton } from '../components/AndroidBackButtonHandler';
 export type { BackButtonHandlerCallback } from '../components/AndroidBackButtonHandler';
+
 

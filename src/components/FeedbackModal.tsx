@@ -297,7 +297,10 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = () => {
       {/* Modal Backdrop & Container */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+          <div 
+            id="feedback-modal-container"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 p-safe overflow-y-auto"
+          >
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}

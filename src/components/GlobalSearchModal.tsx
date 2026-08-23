@@ -325,7 +325,10 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-start justify-center p-4 sm:p-6 pt-16 sm:pt-24 overflow-y-auto">
+      <div 
+        id="global-search-modal-container"
+        className="fixed inset-0 z-50 flex items-start justify-center p-4 sm:p-6 p-safe pt-16 sm:pt-24 pb-8 overflow-y-auto"
+      >
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}

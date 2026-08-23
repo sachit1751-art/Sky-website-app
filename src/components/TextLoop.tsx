@@ -52,7 +52,7 @@ export const TextLoop: React.FC<TextLoopProps> = ({
   return (
     <span ref={containerRef} className={`inline-flex items-center flex-wrap gap-x-1.5 ${className}`}>
       {staticText && <span className={staticClassName}>{staticText}</span>}
-      <span className="relative inline-flex items-center h-[1.4em] overflow-hidden align-middle px-0.5">
+      <span className="relative inline-flex items-center min-h-[1.65em] py-0.5 overflow-hidden align-middle px-1">
         <AnimatePresence mode="popLayout">
           <motion.span
             key={index}
@@ -61,7 +61,7 @@ export const TextLoop: React.FC<TextLoopProps> = ({
             animate="animate"
             exit="exit"
             transition={{ type: "spring", stiffness: 220, damping: 22 }}
-            className="block whitespace-nowrap leading-tight"
+            className="block whitespace-nowrap leading-normal"
           >
             {words[index]}
           </motion.span>

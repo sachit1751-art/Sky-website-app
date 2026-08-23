@@ -9,7 +9,10 @@ export const Footer: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <footer className="bg-[#FFF8E1] dark:bg-[#12110D] border-t border-[#EBE4CF] dark:border-[#36342A] py-16 px-4 sm:px-6 lg:px-8 relative z-10 transition-colors duration-300">
+    <footer 
+      id="main-footer"
+      className="bg-[#FFF8E1] dark:bg-[#12110D] border-t border-[#EBE4CF] dark:border-[#36342A] pt-16 pb-28 md:pb-16 px-4 sm:px-6 lg:px-8 px-safe pb-safe relative z-10 transition-colors duration-300"
+    >
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between gap-12 mb-12">
         
         {/* Left Column - Brand & Info */}

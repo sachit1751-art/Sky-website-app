@@ -131,7 +131,10 @@ export const RomDetailsModal: React.FC<RomDetailsModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      <div 
+        id="rom-details-modal-container"
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 p-safe overflow-y-auto"
+      >
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}

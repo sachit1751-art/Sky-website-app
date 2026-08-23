@@ -105,12 +105,12 @@ export async function configureStatusBar(isDark: boolean) {
 }
 
 /**
- * Hide native splash screen once initial React view has mounted
+ * Hide native splash screen once initial React view has mounted with smooth fade-out
  */
-export async function hideSplashScreen() {
+export async function hideSplashScreen(fadeOutDurationMs: number = 400) {
   if (!isNative) return;
   try {
-    await SplashScreen.hide({ fadeOutDuration: 300 });
+    await SplashScreen.hide({ fadeOutDuration: fadeOutDurationMs });
   } catch (err) {
     // Non-blocking
   }

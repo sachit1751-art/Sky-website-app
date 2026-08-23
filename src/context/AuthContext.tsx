@@ -3,6 +3,7 @@ import { User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { Admin } from '../../shared/types';
 import { apiFetch } from '../lib/api';
+import { persistentStorage } from '../lib/capacitor';
 
 interface AuthContextType {
   user: User | null;
@@ -26,6 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const handleGracefulLogout = async () => {
     try {
+      await persistentStorage.removeAuthToken();
       await supabase.auth.signOut();
     } catch (e) {
       console.warn('[Auth] Exception during Supabase signOut:', e);
@@ -54,6 +56,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       const token = sessionData?.session?.access_token;
+      if (token) {
+        await persistentStorage.setAuthToken(token);
+      }
 
       if (token) {
         try {
@@ -155,7 +160,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Check initial session
     supabase.auth.getSession()
-      .then(({ data: { session }, error }) => {
+      .then(async ({ data: { session }, error }) => {
         if (!isMounted) return;
         if (error) {
           console.warn('[Auth] Initial session error:', error.message);
@@ -166,6 +171,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         const currentUser = session?.user ?? null;
         setUser(currentUser);
+        if (session?.access_token) {
+          await persistentStorage.setAuthToken(session.access_token);
+        }
         if (currentUser) {
           fetchAdminProfile(currentUser.id).finally(() => {
             if (isMounted) setLoading(false);
@@ -188,6 +196,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (!isMounted) return;
       const currentUser = session?.user ?? null;
       setUser(currentUser);
+
+      if (session?.access_token) {
+        await persistentStorage.setAuthToken(session.access_token);
+      } else if (!currentUser) {
+        await persistentStorage.removeAuthToken();
+      }
 
       try {
         switch (event) {

@@ -152,7 +152,12 @@ export const GlobalKeyboardShortcuts: React.FC = () => {
       {/* Shortcuts Cheat Sheet Modal */}
       <AnimatePresence>
         {isHelpOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div 
+            role="dialog"
+            aria-modal="true"
+            aria-label="Power User Keyboard Shortcuts"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+          >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -176,7 +181,9 @@ export const GlobalKeyboardShortcuts: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setIsHelpOpen(false)}
-                  className="p-2 rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-colors"
+                  data-modal-close="true"
+                  aria-label="Close shortcuts modal"
+                  className="p-2 rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-colors cursor-pointer"
                   type="button"
                 >
                   <X size={18} />

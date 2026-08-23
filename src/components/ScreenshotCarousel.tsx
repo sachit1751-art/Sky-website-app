@@ -405,10 +405,14 @@ export const ScreenshotCarousel: React.FC = () => {
       {/* Fullscreen Lightbox Modal */}
       {showLightbox && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Image Lightbox"
           className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 sm:p-8"
           onClick={() => setShowLightbox(false)}
         >
           <button
+            data-modal-close="true"
             aria-label="Close lightbox"
             onClick={() => setShowLightbox(false)}
             className="absolute top-5 right-5 text-white min-w-[44px] min-h-[44px] p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors cursor-pointer flex items-center justify-center"

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { persistentStorage } from '../lib/capacitor';
 
 type Theme = 'light' | 'dark';
 
@@ -12,7 +13,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
-    // Check localStorage if the user explicitly set a preference previously
+    // Check synchronous storage if available for instant paint
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('sky-theme') as Theme | null;
       if (savedTheme === 'light' || savedTheme === 'dark') {
@@ -22,6 +23,20 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Default to light mode for all new users
     return 'light';
   });
+
+  // Re-hydrate from @capacitor/preferences on native platform boot
+  useEffect(() => {
+    let isMounted = true;
+    persistentStorage.getThemePreference().then((saved) => {
+      if (isMounted && saved && (saved === 'light' || saved === 'dark') && saved !== theme) {
+        setThemeState(saved);
+      }
+    }).catch(() => {});
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -34,16 +49,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       document.body.classList.remove('dark');
       root.style.colorScheme = 'light';
     }
-    localStorage.setItem('sky-theme', theme);
+    
+    // Save to @capacitor/preferences & localStorage
+    persistentStorage.setThemePreference(theme).catch(() => {});
   }, [theme]);
-
-  const applyThemeUpdate = (newTheme: Theme) => {
-    document.documentElement.classList.add('theme-transitioning');
-    setThemeState(newTheme);
-    window.setTimeout(() => {
-      document.documentElement.classList.remove('theme-transitioning');
-    }, 450);
-  };
 
   const toggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light';

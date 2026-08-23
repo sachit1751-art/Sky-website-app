@@ -49,6 +49,7 @@ import Fuse from 'fuse.js';
 import { staggerItemVariants } from '../components/PageTransition';
 
 import { useSavedRoms } from '../hooks/useSavedRoms';
+import { useAndroidBackButton } from '../components/AndroidBackButtonHandler';
 
 type FilterCategory = 'all' | 'android-17' | 'android-16' | 'official' | 'unofficial' | 'saved';
 type StabilityType = 'Stable' | 'Beta';
@@ -86,6 +87,28 @@ export const RomsPage: React.FC = () => {
   const [selectedAndroidVersions, setSelectedAndroidVersions] = useState<Set<string>>(new Set());
   const [selectedStabilities, setSelectedStabilities] = useState<Set<string>>(new Set());
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [sortBy, setSortBy] = useState<'newest' | 'name'>('newest');
+  const [selectedRom, setSelectedRom] = useState<RomItem | null>(null);
+  const [compareList, setCompareList] = useState<RomItem[]>([]);
+  const [isCompareModalOpen, setIsCompareModalOpen] = useState<boolean>(false);
+  const [expandedRomId, setExpandedRomId] = useState<string | null>(null);
+
+  // Android hardware back button handling for active overlays on RomsPage
+  useAndroidBackButton(() => {
+    if (isSidebarOpen) {
+      setIsSidebarOpen(false);
+      return true;
+    }
+    if (isCompareModalOpen) {
+      setIsCompareModalOpen(false);
+      return true;
+    }
+    if (selectedRom) {
+      setSelectedRom(null);
+      return true;
+    }
+    return false;
+  }, 70, isSidebarOpen || isCompareModalOpen || selectedRom !== null);
 
   useEffect(() => {
     const param = searchParams.get('search');
@@ -104,11 +127,6 @@ export const RomsPage: React.FC = () => {
       }
     }
   }, [routeId, searchParams, roms]);
-  const [sortBy, setSortBy] = useState<'newest' | 'name'>('newest');
-  const [selectedRom, setSelectedRom] = useState<RomItem | null>(null);
-  const [compareList, setCompareList] = useState<RomItem[]>([]);
-  const [isCompareModalOpen, setIsCompareModalOpen] = useState<boolean>(false);
-  const [expandedRomId, setExpandedRomId] = useState<string | null>(null);
 
   const toggleCompare = useCallback((rom: RomItem, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
@@ -548,7 +566,12 @@ export const RomsPage: React.FC = () => {
             >
               <div className="flex items-center justify-between mb-10">
                 <h2 className="text-xl font-black text-[#49473E] dark:text-[#F4EFE6] tracking-tighter uppercase">Filters</h2>
-                <button onClick={() => setIsSidebarOpen(false)} className="p-2 rounded-full bg-[#EBE4CF] dark:bg-[#1F1E18]">
+                <button 
+                  onClick={() => setIsSidebarOpen(false)} 
+                  data-modal-close="true"
+                  aria-label="Close filters"
+                  className="p-2 rounded-full bg-[#EBE4CF] dark:bg-[#1F1E18] text-[#787567] dark:text-[#BDB8A4] hover:text-[#121212] dark:hover:text-[#F4EFE6] transition-colors cursor-pointer"
+                >
                   <X className="w-5 h-5" />
                 </button>
               </div>

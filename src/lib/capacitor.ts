@@ -168,44 +168,168 @@ export async function nativeShare(options: {
 }
 
 /**
- * Persistent Storage Helper: uses Capacitor Preferences on native, localStorage on web
+ * Persistent Storage Helper: uses Capacitor Preferences on native Android/iOS,
+ * and localStorage with memory fallbacks on Web.
+ * 
+ * Provides unified, asynchronous, type-safe persistence across application restarts,
+ * specifically handling theme preferences, authentication sessions, search caches, and guide states.
  */
 export const persistentStorage = {
+  /**
+   * Retrieve a string value by key
+   */
   async get(key: string): Promise<string | null> {
     if (isNative) {
       try {
         const { value } = await Preferences.get({ key });
-        return value;
-      } catch {
-        // Fallback to localStorage
+        if (value !== null && value !== undefined) {
+          return value;
+        }
+      } catch (err) {
+        console.warn(`[persistentStorage] Native Preferences.get failed for key "${key}":`, err);
       }
     }
     if (typeof window !== 'undefined' && window.localStorage) {
-      return localStorage.getItem(key);
+      try {
+        return localStorage.getItem(key);
+      } catch (err) {
+        console.warn(`[persistentStorage] localStorage.getItem failed for key "${key}":`, err);
+      }
     }
     return null;
   },
 
+  /**
+   * Set a string value for a given key
+   */
   async set(key: string, value: string): Promise<void> {
     if (isNative) {
       try {
-        await Preferences.set({ key, value });
-      } catch {}
+        await Preferences.set({ key, value: String(value) });
+      } catch (err) {
+        console.warn(`[persistentStorage] Native Preferences.set failed for key "${key}":`, err);
+      }
     }
     if (typeof window !== 'undefined' && window.localStorage) {
-      localStorage.setItem(key, value);
+      try {
+        localStorage.setItem(key, String(value));
+      } catch (err) {
+        console.warn(`[persistentStorage] localStorage.setItem failed for key "${key}":`, err);
+      }
     }
   },
 
+  /**
+   * Remove a key from persistent storage
+   */
   async remove(key: string): Promise<void> {
     if (isNative) {
       try {
         await Preferences.remove({ key });
-      } catch {}
+      } catch (err) {
+        console.warn(`[persistentStorage] Native Preferences.remove failed for key "${key}":`, err);
+      }
     }
     if (typeof window !== 'undefined' && window.localStorage) {
-      localStorage.removeItem(key);
+      try {
+        localStorage.removeItem(key);
+      } catch (err) {
+        console.warn(`[persistentStorage] localStorage.removeItem failed for key "${key}":`, err);
+      }
     }
+  },
+
+  /**
+   * Clear all stored keys
+   */
+  async clear(): Promise<void> {
+    if (isNative) {
+      try {
+        await Preferences.clear();
+      } catch (err) {
+        console.warn('[persistentStorage] Native Preferences.clear failed:', err);
+      }
+    }
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        localStorage.clear();
+      } catch (err) {
+        console.warn('[persistentStorage] localStorage.clear failed:', err);
+      }
+    }
+  },
+
+  /**
+   * Helper: Retrieve JSON object
+   */
+  async getJSON<T = any>(key: string, fallback: T): Promise<T> {
+    try {
+      const raw = await this.get(key);
+      if (raw) {
+        return JSON.parse(raw) as T;
+      }
+    } catch (err) {
+      console.warn(`[persistentStorage] getJSON parse error for key "${key}":`, err);
+    }
+    return fallback;
+  },
+
+  /**
+   * Helper: Save JSON object
+   */
+  async setJSON<T = any>(key: string, value: T): Promise<void> {
+    try {
+      await this.set(key, JSON.stringify(value));
+    } catch (err) {
+      console.warn(`[persistentStorage] setJSON stringify error for key "${key}":`, err);
+    }
+  },
+
+  // ---------------------------------------------------------------------------
+  // Dedicated Secure Domain Methods (Theme & Session Tokens)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get user theme preference ('light' | 'dark')
+   */
+  async getThemePreference(): Promise<'light' | 'dark' | null> {
+    const val = await this.get('sky-theme');
+    if (val === 'light' || val === 'dark') {
+      return val;
+    }
+    return null;
+  },
+
+  /**
+   * Save user theme preference
+   */
+  async setThemePreference(theme: 'light' | 'dark'): Promise<void> {
+    await this.set('sky-theme', theme);
+  },
+
+  /**
+   * Get securely persisted session authentication token
+   */
+  async getAuthToken(): Promise<string | null> {
+    return await this.get('sky_auth_access_token');
+  },
+
+  /**
+   * Save authentication session token
+   */
+  async setAuthToken(token: string): Promise<void> {
+    if (!token) {
+      await this.remove('sky_auth_access_token');
+    } else {
+      await this.set('sky_auth_access_token', token);
+    }
+  },
+
+  /**
+   * Remove authentication session token on sign out
+   */
+  async removeAuthToken(): Promise<void> {
+    await this.remove('sky_auth_access_token');
   }
 };
 
@@ -223,3 +347,8 @@ export async function getNetworkStatus(): Promise<ConnectionStatus> {
     connectionType: 'unknown'
   };
 }
+
+// Re-export hardware back button hook and registration utilities
+export { registerBackButtonHandler, useAndroidBackButton } from '../components/AndroidBackButtonHandler';
+export type { BackButtonHandlerCallback } from '../components/AndroidBackButtonHandler';
+

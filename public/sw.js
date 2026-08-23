@@ -175,7 +175,35 @@ if (workbox) {
   });
 
   // ---------------------------------------------------------------------------
-  // 8. Background Sync & Custom Message Handler
+  // 8. Push Notification Click & Deep Link Navigation Handler
+  // ---------------------------------------------------------------------------
+  self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    const deepLinkUrl = event.notification.data?.url || event.notification.data?.route || '/';
+
+    event.waitUntil(
+      self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+        // If an app window is already open, focus it and post a navigate message
+        for (const client of clientList) {
+          if ('focus' in client) {
+            client.focus();
+            client.postMessage({
+              type: 'NAVIGATE',
+              url: deepLinkUrl
+            });
+            return;
+          }
+        }
+        // Otherwise open a new window with the deep link URL
+        if (self.clients.openWindow) {
+          return self.clients.openWindow(deepLinkUrl);
+        }
+      })
+    );
+  });
+
+  // ---------------------------------------------------------------------------
+  // 9. Background Sync & Custom Message Handler
   // ---------------------------------------------------------------------------
   self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {

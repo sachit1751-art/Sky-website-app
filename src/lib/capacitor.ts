@@ -169,6 +169,42 @@ export async function nativeShare(options: {
 }
 
 /**
+ * Generate a deep link URL for a specific ROM, admin page, or section.
+ * Supports custom scheme (sky://) and universal web URL (https://sky-roms.vercel.app/...)
+ */
+export function generateDeepLink(path: string, scheme: 'universal' | 'app' = 'universal'): string {
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  if (scheme === 'app') {
+    return `sky:/${normalizedPath}`;
+  }
+  const baseUrl = typeof window !== 'undefined' && window.location.origin
+    ? window.location.origin
+    : 'https://sky-roms.vercel.app';
+  return `${baseUrl}${normalizedPath}`;
+}
+
+/**
+ * Share a specific ROM with formatted metadata and deep link
+ */
+export async function shareRom(rom: {
+  id?: string;
+  name: string;
+  androidVersion?: string;
+  maintainer?: string;
+  url?: string;
+}): Promise<boolean> {
+  const romPath = `/roms/${encodeURIComponent(rom.id || rom.name.toLowerCase().replace(/\s+/g, '-'))}`;
+  const deepLink = generateDeepLink(romPath, 'universal');
+
+  return nativeShare({
+    title: `${rom.name} (${rom.androidVersion || 'Android'}) - Xiaomi Mi 11X / POCO F3`,
+    text: `Download and view full specifications, changelogs, and maintainer details for ${rom.name} by ${rom.maintainer || 'Community'} on SKY ROMs.`,
+    url: deepLink,
+    dialogTitle: `Share ${rom.name}`
+  });
+}
+
+/**
  * Persistent Storage Helper: uses Capacitor Preferences on native Android/iOS,
  * and localStorage with memory fallbacks on Web.
  * 

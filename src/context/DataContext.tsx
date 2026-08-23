@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { RomItem, SpecCategory, TeamMember, CommunityChannel, FAQItem, CoreValue } from '../../shared/types';
 import { apiFetch } from '../lib/api';
+import { TEAM_MEMBERS } from '../data';
 import { Network } from '@capacitor/network';
 import { isNative } from '../lib/capacitor';
 
@@ -40,7 +41,7 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [roms, setRoms] = useState<RomItem[]>([]);
   const [specs, setSpecs] = useState<SpecCategory[]>([]);
-  const [team, setTeam] = useState<TeamMember[]>([]);
+  const [team, setTeam] = useState<TeamMember[]>(TEAM_MEMBERS);
   const [faqs, setFaqs] = useState<FAQItem[]>([]);
   const [communityChannels, setCommunityChannels] = useState<CommunityChannel[]>([]);
   const [coreValues, setCoreValues] = useState<CoreValue[]>([]);

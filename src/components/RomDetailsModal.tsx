@@ -9,7 +9,7 @@ import Markdown from 'react-markdown';
 
 import { usePerformanceTier } from '../context/PerformanceContext';
 import { supabase } from '../lib/supabase';
-import { nativeShare, triggerHaptic } from '../lib/capacitor';
+import { shareRom, generateDeepLink, triggerHaptic } from '../lib/capacitor';
 
 interface RomDetailsModalProps {
   rom: RomItem | null;
@@ -478,19 +478,21 @@ export const RomDetailsModal: React.FC<RomDetailsModalProps> = ({
               <button
                 onClick={() => {
                   triggerHaptic('light');
-                  onCopyUrl(rom.url);
+                  const romDeepLink = generateDeepLink(`/roms/${encodeURIComponent(rom.id || rom.name.toLowerCase().replace(/\s+/g, '-'))}`);
+                  onCopyUrl(romDeepLink);
                 }}
                 className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold bg-[#FAF3DD] dark:bg-[#1F1E18] text-[#49473E] dark:text-[#F4EFE6] border border-[#EBE4CF] dark:border-[#36342A] hover:bg-[#FAF0CF] dark:hover:bg-[#2B2921] transition-all cursor-pointer"
+                title="Copy direct deep link to this ROM"
               >
                 {isCopied ? (
                   <>
                     <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                    <span>Copied</span>
+                    <span>Link Copied</span>
                   </>
                 ) : (
                   <>
                     <Copy className="w-4 h-4" />
-                    <span>Copy Link</span>
+                    <span>Copy Deep Link</span>
                   </>
                 )}
               </button>
@@ -498,15 +500,10 @@ export const RomDetailsModal: React.FC<RomDetailsModalProps> = ({
               <button
                 onClick={() => {
                   triggerHaptic('light');
-                  nativeShare({
-                    title: `${rom.name} for Xiaomi Mi 11X / POCO F3`,
-                    text: `Check out ${rom.name} (${rom.androidVersion}) with maintainer ${rom.maintainer} on SKY ROMs!`,
-                    url: rom.url || window.location.href,
-                    dialogTitle: `Share ${rom.name}`
-                  });
+                  shareRom(rom);
                 }}
                 className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold bg-[#FAF3DD] dark:bg-[#1F1E18] text-[#49473E] dark:text-[#F4EFE6] border border-[#EBE4CF] dark:border-[#36342A] hover:bg-[#FAF0CF] dark:hover:bg-[#2B2921] transition-all cursor-pointer"
-                title="Share ROM via Android Share Sheet"
+                title="Share ROM via Android Share Sheet & Deep Link"
               >
                 <Share2 className="w-4 h-4" />
                 <span>Share</span>

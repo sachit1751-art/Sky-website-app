@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useBackendData } from '../context/DataContext';
 import { Github, Send, Sparkles, Terminal, Wrench, ShieldCheck, FlaskConical, History, UserCheck, Users, RotateCcw } from 'lucide-react';
 import { TeamMember } from '../../shared/types';
+import { motion } from 'motion/react';
 
 const TeamAvatar: React.FC<{ name: string; avatarUrl?: string }> = ({ name, avatarUrl }) => {
   const initials = (name || 'SK')
@@ -252,9 +253,12 @@ export const TeamSection: React.FC = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5 sm:gap-6">
-          {filteredMembers.map((member) => (
-            <div
+          {filteredMembers.map((member, idx) => (
+            <motion.div
               key={member.id || member.handle || member.name}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
               style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 250px' }}
               className="bg-gradient-to-b from-[#FFFDF7] to-[#FAF5E6] dark:from-[#181712] dark:to-[#12110D] rounded-3xl p-5 sm:p-6 border border-[#EBE4CF] dark:border-[#2C2A22] hover:border-[#FDE694]/60 dark:hover:border-[#FDE694]/40 shadow-xs hover:shadow-xl hover:-translate-y-1 hover:scale-[1.01] transition-all duration-300 ease-out flex flex-col justify-between"
             >
@@ -307,7 +311,7 @@ export const TeamSection: React.FC = () => {
                   </a>
                 )}
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       )}

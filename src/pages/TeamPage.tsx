@@ -1,28 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { TeamSection } from '../components/TeamSection';
-import { TeamSkeleton } from '../components/skeletons/TeamSkeleton';
 import { SEO } from '../components/SEO';
 import { motion } from 'motion/react';
 
 export const TeamPage: React.FC = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  if (isLoading) {
-    return (
-      <>
-        <SEO
-          title="The Team"
-          description="Meet the core admins, kernel engineers, and device maintainers driving the SKY smartphone project."
-          canonicalUrl="/team"
-          ogImage="/screenshot1.jpg"
-          ogImageAlt="SKY Smartphone Core Team & Maintainers"
-          ogType="profile"
-        />
-        <TeamSkeleton />
-      </>
-    );
-  }
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}

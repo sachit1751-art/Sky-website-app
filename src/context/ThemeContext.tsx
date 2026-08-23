@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { persistentStorage } from '../lib/capacitor';
+import { persistentStorage, isNative, configureStatusBar } from '../lib/capacitor';
+import { App as CapApp } from '@capacitor/app';
 
 type Theme = 'light' | 'dark';
 
@@ -13,14 +14,15 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
-    // Check synchronous storage if available for instant paint
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('sky-theme') as Theme | null;
       if (savedTheme === 'light' || savedTheme === 'dark') {
         return savedTheme;
       }
+      // Check system preference if no saved theme
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      return prefersDark ? 'dark' : 'light';
     }
-    // Default to light mode for all new users
     return 'light';
   });
 
@@ -28,13 +30,58 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     let isMounted = true;
     persistentStorage.getThemePreference().then((saved) => {
-      if (isMounted && saved && (saved === 'light' || saved === 'dark') && saved !== theme) {
+      const savedManual = typeof window !== 'undefined' ? localStorage.getItem('sky-theme-manual') : null;
+      if (isMounted && saved && (saved === 'light' || saved === 'dark') && saved !== theme && savedManual) {
         setThemeState(saved);
       }
     }).catch(() => {});
 
     return () => {
       isMounted = false;
+    };
+  }, []);
+
+  // Set up Capacitor App plugin state listener for automatic Android system-level theme synchronization
+  useEffect(() => {
+    let appStateListener: any;
+
+    const checkAndSyncSystemTheme = () => {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const systemTheme: Theme = prefersDark ? 'dark' : 'light';
+      const isManual = localStorage.getItem('sky-theme-manual') === 'true';
+      
+      // If not manually overridden by user, synchronize with Android system preference
+      if (!isManual) {
+        setTheme(systemTheme);
+      }
+    };
+
+    // Listen to Capacitor App state changes (e.g. resuming app from background / system settings)
+    if (isNative) {
+      CapApp.addListener('appStateChange', ({ isActive }) => {
+        if (isActive) {
+          checkAndSyncSystemTheme();
+        }
+      }).then((listener) => {
+        appStateListener = listener;
+      }).catch(() => {});
+    }
+
+    // Also listen to system media query changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleMediaChange = (e: MediaQueryListEvent) => {
+      const isManual = localStorage.getItem('sky-theme-manual') === 'true';
+      if (!isManual) {
+        setTheme(e.matches ? 'dark' : 'light');
+      }
+    };
+    mediaQuery.addEventListener('change', handleMediaChange);
+
+    return () => {
+      if (appStateListener && typeof appStateListener.remove === 'function') {
+        appStateListener.remove();
+      }
+      mediaQuery.removeEventListener('change', handleMediaChange);
     };
   }, []);
 
@@ -52,10 +99,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     // Save to @capacitor/preferences & localStorage
     persistentStorage.setThemePreference(theme).catch(() => {});
+    configureStatusBar(theme === 'dark').catch(() => {});
   }, [theme]);
 
   const toggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light';
+    localStorage.setItem('sky-theme-manual', 'true');
     setTheme(nextTheme);
   };
 

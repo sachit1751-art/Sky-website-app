@@ -24,20 +24,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- Custom URL Scheme: sky://roms, sky://device, etc. -->
+            <!-- Custom URL Schemes: sky:// and skyofficial:// (e.g. sky://roms/evolution-x, sky://admin/dashboard) -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="sky" />
+                <data android:scheme="skyofficial" />
             </intent-filter>
 
-            <!-- Universal Links / App Links: https://sky-roms.vercel.app/ -->
+            <!-- Universal Links / App Links: HTTP & HTTPS -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="https" android:host="sky-roms.vercel.app" />
+                <data android:scheme="http" android:host="sky-roms.vercel.app" />
+                <data android:scheme="https" android:host="*.run.app" />
             </intent-filter>
 
         </activity>

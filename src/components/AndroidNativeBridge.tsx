@@ -129,25 +129,67 @@ export const AndroidNativeBridge: React.FC = () => {
     };
   }, []);
 
-  // 3. Deep Linking Listener (e.g. sky://roms or https://sky-roms.vercel.app/device)
+  // 3. Deep Linking & Universal Links Listener (e.g. sky://roms/evolution-x, https://sky-roms.vercel.app/admin/roms/new)
   useEffect(() => {
     if (!isNative) return;
 
-    const urlListenerPromise = CapApp.addListener('appUrlOpen', (data) => {
+    // Helper to resolve deep link path from any URI format
+    const resolveDeepLinkPath = (rawUrl: string): string | null => {
       try {
-        const parsedUrl = new URL(data.url);
-        // Extract pathname + search + hash
-        const path = parsedUrl.pathname + parsedUrl.search + parsedUrl.hash;
-        if (path) {
-          triggerHaptic('medium');
-          navigate(path);
+        // 1. If standard HTTP/HTTPS or custom sky:// URL
+        if (rawUrl.includes('://')) {
+          const parsed = new URL(rawUrl);
+          
+          // Handle sky:// custom scheme (e.g. sky://roms/evolution-x or sky://admin/dashboard)
+          if (parsed.protocol === 'sky:') {
+            const host = parsed.host ? `/${parsed.host}` : '';
+            const pathname = parsed.pathname || '';
+            const search = parsed.search || '';
+            const hash = parsed.hash || '';
+            const fullPath = `${host}${pathname}${search}${hash}`.replace(/\/+/g, '/');
+            return fullPath || '/';
+          }
+          
+          // Handle Universal Links / App Links (e.g. https://sky-roms.vercel.app/roms?id=123)
+          const path = (parsed.pathname || '/') + (parsed.search || '') + (parsed.hash || '');
+          return path;
         }
-      } catch {
-        // Fallback for custom schemes like sky://roms/123
-        const relativePath = data.url.replace(/^[a-zA-Z]+:\/\//, '/');
-        if (relativePath) {
+
+        // 2. Fallback for relative paths or scheme-less URLs
+        const cleaned = rawUrl.replace(/^[a-zA-Z]+:\/\//, '/');
+        return cleaned.startsWith('/') ? cleaned : `/${cleaned}`;
+      } catch (err) {
+        console.warn('[AndroidNativeBridge] Failed to parse deep link URL:', rawUrl, err);
+        return null;
+      }
+    };
+
+    // Check for initial launch URL if app was cold-started from deep link
+    CapApp.getLaunchUrl().then((launchUrl) => {
+      if (launchUrl && launchUrl.url) {
+        const targetPath = resolveDeepLinkPath(launchUrl.url);
+        if (targetPath && targetPath !== '/') {
           triggerHaptic('medium');
-          navigate(relativePath);
+          navigate(targetPath, { replace: true });
+        }
+      }
+    }).catch((err) => {
+      console.warn('[AndroidNativeBridge] Error checking launchUrl:', err);
+    });
+
+    // Listen for incoming deep links while app is running in background or foreground
+    const urlListenerPromise = CapApp.addListener('appUrlOpen', (data) => {
+      if (data && data.url) {
+        const targetPath = resolveDeepLinkPath(data.url);
+        if (targetPath) {
+          triggerHaptic('medium');
+          showToast({
+            title: 'Deep Link Opened',
+            message: `Navigating to ${targetPath.split('?')[0]}`,
+            type: 'info',
+            duration: 2500
+          });
+          navigate(targetPath);
         }
       }
     });
@@ -155,7 +197,7 @@ export const AndroidNativeBridge: React.FC = () => {
     return () => {
       urlListenerPromise.then((handle) => handle.remove());
     };
-  }, [navigate]);
+  }, [navigate, showToast]);
 
   // 4. Native Network Status Monitoring
   useEffect(() => {

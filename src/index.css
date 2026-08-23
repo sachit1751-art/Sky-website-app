@@ -373,3 +373,30 @@
   height: calc(100dvh - max(var(--safe-area-top, 0px), env(safe-area-inset-top, 0px)) - max(var(--safe-area-bottom, 0px), env(safe-area-inset-bottom, 0px)));
 }
 
+/* Accessibility Modes */
+.text-scale-large {
+  font-size: 1.1rem;
+}
+.text-scale-large h1 { font-size: 2.25rem !important; }
+.text-scale-large h2 { font-size: 1.875rem !important; }
+.text-scale-large h3 { font-size: 1.5rem !important; }
+
+.text-scale-xlarge {
+  font-size: 1.25rem;
+}
+.text-scale-xlarge h1 { font-size: 2.5rem !important; }
+.text-scale-xlarge h2 { font-size: 2rem !important; }
+.text-scale-xlarge h3 { font-size: 1.75rem !important; }
+
+.high-contrast {
+  filter: contrast(1.25);
+}
+.high-contrast * {
+  border-color: currentColor !important;
+}
+
+.dyslexia-font, .dyslexia-font * {
+  font-family: 'Comic Sans MS', 'Arial', sans-serif !important;
+  letter-spacing: 0.05em !important;
+}
+

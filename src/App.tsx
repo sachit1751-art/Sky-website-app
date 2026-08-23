@@ -302,6 +302,8 @@ import { GlobalKeyboardShortcuts } from './components/GlobalKeyboardShortcuts';
 import { AndroidNativeBridge } from './components/AndroidNativeBridge';
 import { AndroidBackButtonHandler } from './components/AndroidBackButtonHandler';
 import { ShakeRefreshHandler } from './components/ShakeRefreshHandler';
+import { AccessibilityProvider } from './context/AccessibilityContext';
+import { AccessibilityToolbar } from './components/AccessibilityToolbar';
 
 export default function App() {
   return (
@@ -309,20 +311,23 @@ export default function App() {
       <ErrorBoundary>
         <PerformanceProvider>
           <ThemeProvider>
-            <ToastProvider>
-              <AuthProvider>
-                <DataProvider>
-                  <SessionManager />
-                  <ShakeRefreshHandler />
-                  <BrowserRouter>
-                    <AndroidNativeBridge />
-                    <AndroidBackButtonHandler />
-                    <GlobalKeyboardShortcuts />
-                    <AnimatedRoutes />
-                  </BrowserRouter>
-                </DataProvider>
-              </AuthProvider>
-            </ToastProvider>
+            <AccessibilityProvider>
+              <ToastProvider>
+                <AuthProvider>
+                  <DataProvider>
+                    <SessionManager />
+                    <ShakeRefreshHandler />
+                    <BrowserRouter>
+                      <AndroidNativeBridge />
+                      <AndroidBackButtonHandler />
+                      <GlobalKeyboardShortcuts />
+                      <AccessibilityToolbar />
+                      <AnimatedRoutes />
+                    </BrowserRouter>
+                  </DataProvider>
+                </AuthProvider>
+              </ToastProvider>
+            </AccessibilityProvider>
           </ThemeProvider>
         </PerformanceProvider>
       </ErrorBoundary>

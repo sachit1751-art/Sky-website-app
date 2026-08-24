@@ -95,20 +95,44 @@ if (javaVersions.size === 0) {
   }
 }
 
-// Check Gradle Wrapper properties
-console.log('\n--- 3. Gradle Wrapper Distribution ---');
+// Check Gradle Wrapper properties and JAR integrity
+console.log('\n--- 3. Gradle Wrapper Distribution & Binary Integrity ---');
 const wrapperPropsPath = path.join(androidDir, 'gradle', 'wrapper', 'gradle-wrapper.properties');
+const wrapperJarPath = path.join(androidDir, 'gradle', 'wrapper', 'gradle-wrapper.jar');
+
 if (fs.existsSync(wrapperPropsPath)) {
   const wrapperContent = fs.readFileSync(wrapperPropsPath, 'utf8');
   const distMatch = wrapperContent.match(/distributionUrl=.*gradle-([0-9.]+)-(all|bin)\.zip/);
   if (distMatch) {
     console.log(`  • Wrapper Gradle Version: ${distMatch[1]} (${distMatch[2]})`);
-    console.log('  ✅ Gradle wrapper configured.');
+    console.log('  ✅ Gradle wrapper properties configured.');
   } else {
     console.log('  ⚠️  Could not parse Gradle distributionUrl version.');
   }
 } else {
   console.log('  ⚠️  gradle-wrapper.properties not found.');
+}
+
+if (fs.existsSync(wrapperJarPath)) {
+  const stats = fs.statSync(wrapperJarPath);
+  const buf = Buffer.alloc(4);
+  const fd = fs.openSync(wrapperJarPath, 'r');
+  fs.readSync(fd, buf, 0, 4, 0);
+  fs.closeSync(fd);
+  const isZip = buf[0] === 0x50 && buf[1] === 0x4b && buf[2] === 0x03 && buf[3] === 0x04;
+
+  if (stats.size > 40000 && isZip) {
+    console.log(`  • gradle-wrapper.jar: ${stats.size} bytes (Valid Zip/JAR header detected)`);
+    console.log('  ✅ gradle-wrapper.jar binary is valid.');
+  } else {
+    hasErrors = true;
+    issues.push(`gradle-wrapper.jar is corrupt or invalid (${stats.size} bytes, isZip=${isZip}).`);
+    console.log(`  ❌ gradle-wrapper.jar is invalid or corrupted!`);
+  }
+} else {
+  hasErrors = true;
+  issues.push('gradle-wrapper.jar does not exist.');
+  console.log('  ❌ gradle-wrapper.jar is missing!');
 }
 
 console.log('\n' + '='.repeat(60));

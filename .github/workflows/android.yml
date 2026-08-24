@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Android Build & APK Generation
 
 on:
   push:
@@ -23,10 +23,10 @@ jobs:
         chmod +x ./scripts/detect-node-compat.sh || true
         ./scripts/detect-node-compat.sh
 
-    - name: Set up Node.js 22
+    - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '22'
+        node-version: 22
         cache: 'npm'
 
     - name: Set up JDK 17
@@ -42,13 +42,13 @@ jobs:
         cache-read-only: false
         validate-wrappers: false
 
-    - name: Regenerate and Verify Authentic Gradle Wrapper
+    - name: Ensure Authentic Gradle Wrapper
       run: |
         cd android
         mkdir -p gradle/wrapper
         gradle wrapper --gradle-version 8.11.1 --distribution-type all
         chmod +x gradlew
-        echo "Validating regenerated wrapper:"
+        echo "Validated Gradle Wrapper:"
         ls -la gradle/wrapper/
         cat gradle/wrapper/gradle-wrapper.properties
 

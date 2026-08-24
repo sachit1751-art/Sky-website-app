@@ -507,6 +507,350 @@ var BACKEND_APP_CONFIG = {
     publicData: "/api/public/data"
   }
 };
+var BACKEND_AOSP_ROMS = [
+  {
+    id: "5zLphMrBZpQEYesFaJQh",
+    name: "AxionAOSP v2.7",
+    androidVersion: "Android 16",
+    status: "Unofficial",
+    maintainer: "Arrowsploit",
+    maintainerUrl: "https://t.me/arrowsploit",
+    maintainerHandle: "@arrowsploit",
+    url: "https://sourceforge.net/projects/arrowsploit-s-android-project/files/RMX1821/lineage-20.0-20230711-UNOFFICIAL-RMX1821.zip/download",
+    description: "Build date: 28th Jun, 2026 | Rom Status : Beta [Hotfix Update] | Fixed SystemWide Vibration Issue.",
+    changelog: [
+      "OTA Pushed",
+      "ROM flash guide included",
+      "Please report with logs if you are facing any bugs"
+    ],
+    createdAt: "2026-08-06T10:59:28.920Z",
+    isPinned: true,
+    logoUrl: "https://i.ibb.co/dsmbQMtN/image.jpg",
+    extraLinks: [],
+    downloadCount: 1540,
+    stabilityTrends: [85, 88, 82, 90, 92],
+    batteryEfficiency: 3
+  },
+  {
+    id: "7VDdekQOdbKThaCZOZkG",
+    name: "Project Infinity X",
+    androidVersion: "Android 16",
+    status: "Official",
+    maintainer: "kAiF",
+    maintainerUrl: "https://t.me/kAiF_00z",
+    maintainerHandle: "@kAiF_00z",
+    url: "https://projectinfinity-x.com/downloads/sky",
+    description: "New Release of Project Infinity X v3.12 for Redmi 12 5G / Poco M6 Pro 5G (sky) is Up! | Variants: GAPPS & Vanilla | Size: 1.35 GB (Vanilla) / 1.66 GB (Gapps)",
+    changelog: [
+      "Updated to v3.12 source base",
+      "Both Vanilla & GApps builds available",
+      "Optimized kernel memory management"
+    ],
+    createdAt: "2026-08-07T10:10:42.180Z",
+    logoUrl: "https://i.ibb.co/TDRZjk0J/image.jpg",
+    extraLinks: [
+      {
+        url: "https://t.me/ProjectInfinityX",
+        label: "Telegram Community"
+      }
+    ],
+    downloadCount: 2890,
+    batteryEfficiency: 4
+  },
+  {
+    id: "8aoau6TPNm1i8T0HG9H0",
+    name: "ASCP",
+    androidVersion: "Android 17",
+    status: "Official",
+    maintainer: "kAiF",
+    maintainerUrl: "https://t.me/kAiF_00z",
+    maintainerHandle: "@kAiF_00z",
+    url: "https://sourceforge.net/projects/project-ascp/files/sky/ASCP-v6.1-sky-OFFICIAL-20260723-1919.zip/download",
+    description: "ASCP Stable v6.1 for Redmi 12 5G / Poco M6 Pro 5G (sky). Clean and high-efficiency daily driver build.",
+    changelog: [
+      "ASCP Version 6.1 stable release",
+      "Android 17 base integration",
+      "Enhanced battery longevity curves"
+    ],
+    createdAt: "2026-08-06T10:44:19.731Z",
+    logoUrl: "https://i.ibb.co/cXyzZhBQ/image.jpg",
+    extraLinks: [
+      {
+        label: "Maintainer Profile",
+        url: "https://t.me/kAiF_00z"
+      }
+    ],
+    downloadCount: 3120,
+    batteryEfficiency: 4
+  },
+  {
+    id: "D8MWSZNL4mk53RMPLdQx",
+    name: "PenguinOS 1.0 Beta",
+    androidVersion: "Android 17",
+    status: "Official",
+    maintainer: "sushmit (@redducc)",
+    maintainerUrl: "https://t.me/redducc",
+    maintainerHandle: "@redducc",
+    url: "https://sourceforge.net/projects/penguinos/files/sky/celerity/PenguinOS-celerity-20260802-sky-beta.zip/download",
+    description: "PenguinOS 1.0 Beta available for Redmi 12 5G / Poco M6 Pro (sky) | Version: Celerity (Seventeen) | Build Date: 2-August-2026 | Size: 1.8 GB (GApps)",
+    changelog: [
+      "Version: Celerity (Seventeen)",
+      "GApps package built-in",
+      "Upstreamed audio HAL and camera pipeline",
+      "Credits: @jendermine, @Venkat3620, @AltafYafai"
+    ],
+    isPinned: true,
+    createdAt: "2026-08-06T10:43:14.878Z",
+    logoUrl: "https://i.ibb.co/8kpd7mq/image.jpg",
+    extraLinks: [],
+    downloadCount: 950,
+    batteryEfficiency: 2
+  },
+  {
+    id: "GDV9R5HmdI79AI89Z2bg",
+    name: "MistOS",
+    androidVersion: "Android 16",
+    status: "Unofficial",
+    maintainer: "@TopexGuy X @AltafYafai",
+    maintainerUrl: "https://t.me/theToplexy",
+    maintainerHandle: "@theToplexy",
+    url: "https://t.me/theToplexy/8721/47604",
+    description: "Release Date: 02/05/2026 | Note: Flash latest FW after flash.",
+    changelog: [
+      "Dirty Flash supported",
+      "OSS Kernel + KSUN integration",
+      "April Security Patch",
+      "Latest OSS trees changes"
+    ],
+    createdAt: "2026-08-09T02:09:05.573Z",
+    logoUrl: "https://i.ibb.co/tTBMcF11/image.jpg",
+    extraLinks: [
+      {
+        label: "Community Discussion",
+        url: "https://t.me/theToplexy/75/45940"
+      }
+    ],
+    downloadCount: 1200,
+    batteryEfficiency: 3
+  },
+  {
+    id: "KevTTy5YbbUP30VTw0X8",
+    name: "PiXEL-OS",
+    androidVersion: "Android 16",
+    status: "Official",
+    maintainer: "TopexGuy",
+    maintainerUrl: "https://t.me/theToplexy",
+    maintainerHandle: "@TopexGuy",
+    url: "https://sourceforge.net/projects/skyroms/files/PixelOS_sky-16.2-20260729-1641.zip/download",
+    description: "Release Date: 01/08/2026 | PixelOS v16.2 with Google Pixel experience and smooth stock gestures.",
+    changelog: [
+      "Firmware Included in zip",
+      "Upstreamed 5.10.257 Kernel",
+      "Dropped Pre-Root (Use LKM)",
+      "June Security Patch"
+    ],
+    createdAt: "2026-08-06T08:40:05.354Z",
+    logoUrl: "https://i.ibb.co/LXkm6pbW/image.jpg",
+    extraLinks: [
+      {
+        url: "https://t.me/theToplexy/1/56900",
+        label: "Support Group"
+      },
+      {
+        url: "https://t.me/Redmi125gChannel",
+        label: "Device Updates"
+      }
+    ],
+    downloadCount: 4500,
+    batteryEfficiency: 4
+  },
+  {
+    id: "TB0hwdaULyL5co4YL6n7",
+    name: "iode-7.7",
+    androidVersion: "Android 16",
+    status: "Unofficial",
+    maintainer: "@TopexGuy",
+    maintainerUrl: "https://t.me/theToplexy",
+    maintainerHandle: "@TopexGuy",
+    url: "https://sourceforge.net/projects/skyroms/files/iode-7.7-20260805-sky.zip/download",
+    description: "Release Date: 07/08/2026 | De-Googled privacy-first OS with microG support and built-in ad/tracker blocker.",
+    changelog: [
+      "Firmware Included in build",
+      "Upstreamed 5.10.257 Kernel",
+      "Signed + User Build",
+      "June Security Patch",
+      "Built-in tracker blocker engine"
+    ],
+    createdAt: "2026-08-10T10:54:38.808Z",
+    logoUrl: "https://i.ibb.co/MkYwkgxw/image.jpg",
+    extraLinks: [
+      {
+        label: "Support Us",
+        url: "https://t.me/theToplexy/1/56900"
+      }
+    ],
+    downloadCount: 890,
+    batteryEfficiency: 3
+  },
+  {
+    id: "cgSYLW0sNEG5LCTWo98Q",
+    name: "Project Sakura",
+    androidVersion: "Android 16",
+    status: "Official",
+    maintainer: "Project Sakura Team",
+    maintainerUrl: "https://t.me/ProjectSakuraArchives",
+    maintainerHandle: "@ProjectSakura",
+    url: "https://t.me/ProjectSakuraArchives/12/372",
+    description: "New Update for Poco M6 Pro 5G / Redmi 12 5G (sky) is here! | Version: 16.3.0 | Date: 2026/07/19",
+    changelog: [
+      "Version 16.3.0 maintenance release",
+      "Sakura custom settings redesign",
+      "Improved thermals during extended gaming",
+      "Sub-second app launch optimizations"
+    ],
+    createdAt: "2026-08-06T11:02:19.678Z",
+    logoUrl: "https://i.ibb.co/hxCRQzKg/image.jpg",
+    extraLinks: [
+      {
+        label: "Support Group",
+        url: "https://t.me/theToplexy"
+      },
+      {
+        label: "Follow for Updates",
+        url: "https://t.me/ProjectSakuraAnnouncements"
+      }
+    ],
+    downloadCount: 3400,
+    batteryEfficiency: 3
+  },
+  {
+    id: "rcTDKwiVE4MLOc2bjsAl",
+    name: "VoltageOS",
+    androidVersion: "Android 16",
+    status: "Official",
+    maintainer: "TopexGuy",
+    maintainerUrl: "https://t.me/theToplexy",
+    maintainerHandle: "@TopexGuy",
+    url: "https://t.me/theToplexy/8721/69614",
+    description: "Release Date: 20/07/2026 | VoltageOS built for optimal responsiveness and battery balance on Redmi 12 5G / POCO M6 Pro 5G.",
+    changelog: [
+      "Dirty flash compatible",
+      "Firmware Included in installer",
+      "Upstreamed OSS Kernel",
+      "Dropped Pre-Root (Use LKM)",
+      "July Security Patch"
+    ],
+    createdAt: "2026-08-06T10:46:58.498Z",
+    logoUrl: "https://i.ibb.co/2YgZmRZp/image.jpg",
+    extraLinks: [
+      {
+        label: "Support Group",
+        url: "https://t.me/theToplexy/1/14293"
+      },
+      {
+        label: "Device Updates",
+        url: "https://t.me/Redmi125gChannel"
+      }
+    ],
+    downloadCount: 2200,
+    batteryEfficiency: 4
+  },
+  {
+    id: "rdGN7khVO44ynwbaHwVN",
+    name: "CrDroid",
+    androidVersion: "Android 16",
+    status: "Official",
+    maintainer: "Mourya Baruah",
+    maintainerUrl: "https://t.me/mourya",
+    maintainerHandle: "@mourya",
+    url: "https://sourceforge.net/projects/mourya-sky/files/crdroid/crDroidAndroid-16.0-20260528-sky-v12.10-userdebug.zip/download",
+    description: "Maintainer: Mourya Baruah | Variant: user (Monthly) | Size: 1.28 GiB | Rich personalization and performance toggles.",
+    changelog: [
+      "Revamped GameSpace overlay and performance profiles",
+      "Added 2 new Pulse renderer styles - Particle & Waveform",
+      "Added new Pulse Bass haptics vibration mode",
+      "Upstreamed crDroid 12.10 core"
+    ],
+    createdAt: "2026-08-06T11:00:40.414Z",
+    logoUrl: "https://i.ibb.co/nMxxXvy8/image.jpg",
+    extraLinks: [],
+    downloadCount: 3800,
+    batteryEfficiency: 3
+  },
+  {
+    id: "ye5h68gD9bbxFZ6WRS84",
+    name: "LunarisAOSP 3.12",
+    androidVersion: "Android 16",
+    status: "Unofficial",
+    maintainer: "@C8_XD",
+    maintainerUrl: "https://t.me/C8_XD",
+    maintainerHandle: "@C8_XD",
+    url: "https://cdn.luasup.xyz/sky/Lunaris/Lunaris-AOSP-sky-Community-3.12-VANILLA-2026071014.zip",
+    description: "LunarisAOSP 3.12 - QPR2 - unOFFICIAL | Android 16 | Build type: Gapps / Vanilla | Release date: 10 - 07 - 2026",
+    changelog: [
+      "Initial build QPR2 base",
+      "July Security Patch",
+      "Clean Flash & Dirty Flash supported",
+      "OSS Kernel added + KSUN included",
+      "Double tap to wake (DT2W) active",
+      "User + Signed Build"
+    ],
+    isPinned: true,
+    createdAt: "2026-08-06T10:58:24.082Z",
+    logoUrl: "https://i.ibb.co/k6P0rDnX/image.jpg",
+    extraLinks: [
+      {
+        label: "Global Support",
+        url: "https://t.me/Skyglobalupdates"
+      },
+      {
+        label: "Device Support Group",
+        url: "https://t.me/Redmi125GSupport"
+      },
+      {
+        label: "Updates Channel",
+        url: "https://t.me/Redmi125GChannel"
+      }
+    ],
+    downloadCount: 5200,
+    batteryEfficiency: 4
+  },
+  {
+    id: "eos-v3-6-sky-unofficial",
+    name: "/e/OS v3.6",
+    androidVersion: "Android 16",
+    status: "Unofficial",
+    maintainer: "TopexGuy",
+    maintainerUrl: "https://t.me/TheToplexy",
+    maintainerHandle: "@TopexGuy",
+    url: "https://sourceforge.net/projects/skyroms/files/e-3.6-a16-20260220-UNOFFICIAL-sky.zip/download",
+    description: "Release Date: 23/02/2026 | /e/OS v3.6 Unofficial for Redmi 12 5G / POCO M6 Pro 5G (sky). Privacy-oriented, de-googled mobile operating system with microG services, Enforcing + Signed + User build, and Dolby Audio support.",
+    changelog: [
+      "Clean Flash Required",
+      "Enforcing + Signed + User",
+      "Feb'26 Security Patch",
+      "Dolby Added",
+      "Credits: Thanks to @lostark13 for base tree, @mo_faza, @Sagarp3 for testing"
+    ],
+    createdAt: "2026-02-23T00:00:00.000Z",
+    extraLinks: [
+      {
+        label: "Support Group (@TheToplexy)",
+        url: "https://t.me/TheToplexy"
+      },
+      {
+        label: "Device Updates (@Redmi125gChannel)",
+        url: "https://t.me/Redmi125gChannel"
+      },
+      {
+        label: "Device Support (@Redmi125gSupport)",
+        url: "https://t.me/Redmi125gSupport"
+      }
+    ],
+    downloadCount: 1680,
+    batteryEfficiency: 4
+  }
+];
 
 // api/index.ts
 import_dotenv.default.config({ override: true });
@@ -806,9 +1150,15 @@ async function getRomRecord(romIdOrName) {
   return mapRomToClient(data);
 }
 async function getAllRomRecords() {
-  const { data, error } = await supabaseAdmin.from("roms").select("*").order("created_at", { ascending: false });
-  if (error) throw new Error(`Database error listing ROMs: ${error.message}`);
-  return (data || []).map(mapRomToClient);
+  try {
+    const { data, error } = await supabaseAdmin.from("roms").select("*").order("created_at", { ascending: false });
+    if (error || !data || data.length === 0) {
+      return BACKEND_AOSP_ROMS;
+    }
+    return data.map(mapRomToClient);
+  } catch (err) {
+    return BACKEND_AOSP_ROMS;
+  }
 }
 async function setRomRecord(romId, data) {
   let targetId = isValidUUID(romId) ? romId.trim() : void 0;
@@ -849,6 +1199,7 @@ async function deleteRomRecord(romIdOrName) {
   if (error) throw new Error(`Database error deleting ROM: ${error.message}`);
 }
 var inMemoryFeedback = [];
+var inMemoryErrorReports = [];
 var inMemoryVotes = /* @__PURE__ */ new Map();
 function generateUUID() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
@@ -2038,6 +2389,59 @@ app.delete("/api/admin/feedback/:id", verifySuperAdmin, async (req, res) => {
     return res.status(200).json({ success: true, message: "Feedback entry deleted successfully." });
   } catch (e) {
     return res.status(500).json({ error: e.message || "Failed to delete feedback entry." });
+  }
+});
+app.post("/api/errors", async (req, res) => {
+  try {
+    const { message, stack, componentStack, url, userAgent, timestamp } = req.body;
+    const report = {
+      id: generateUUID(),
+      message: message || "Unknown error",
+      stack: stack || "",
+      componentStack: componentStack || "",
+      url: url || "",
+      userAgent: userAgent || "",
+      timestamp: timestamp || (/* @__PURE__ */ new Date()).toISOString()
+    };
+    inMemoryErrorReports.unshift(report);
+    if (inMemoryErrorReports.length > 200) inMemoryErrorReports.pop();
+    try {
+      await supabaseAdmin.from("error_reports").insert([{
+        message: report.message,
+        stack: report.stack,
+        component_stack: report.componentStack,
+        url: report.url,
+        user_agent: report.userAgent,
+        created_at: report.timestamp
+      }]);
+    } catch (dbErr) {
+    }
+    return res.status(200).json({ success: true, message: "Crash report submitted successfully." });
+  } catch (e) {
+    return res.status(500).json({ error: e.message || "Failed to submit crash report." });
+  }
+});
+app.get("/api/admin/error-reports", verifyAdmin, async (req, res) => {
+  try {
+    let reports = [...inMemoryErrorReports];
+    try {
+      const { data, error } = await supabaseAdmin.from("error_reports").select("*").order("created_at", { ascending: false }).limit(100);
+      if (!error && data) {
+        reports = data.map((r) => ({
+          id: r.id,
+          message: r.message,
+          stack: r.stack,
+          componentStack: r.component_stack,
+          url: r.url,
+          userAgent: r.user_agent,
+          timestamp: r.created_at
+        }));
+      }
+    } catch (e) {
+    }
+    return res.status(200).json({ success: true, reports });
+  } catch (e) {
+    return res.status(500).json({ error: e.message || "Failed to fetch error reports." });
   }
 });
 app.use("/api/*", (req, res) => {

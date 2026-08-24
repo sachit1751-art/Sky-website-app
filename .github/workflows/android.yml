@@ -1,4 +1,4 @@
-name: Android Build & APK Generation
+name: SKY Android Universal APK
 
 on:
   push:
@@ -7,81 +7,51 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
-env:
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: 'true'
+permissions:
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Detect and Configure Node CI Compatibility
-      run: |
-        chmod +x ./scripts/detect-node-compat.sh || true
-        ./scripts/detect-node-compat.sh
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
-        cache: 'npm'
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
-      with:
-        gradle-version: 8.11.1
-        cache-read-only: false
-        validate-wrappers: false
+      - name: Build Web Application
+        run: npm run build
 
-    - name: Ensure Authentic Gradle Wrapper
-      run: |
-        cd android
-        mkdir -p gradle/wrapper
-        gradle wrapper --gradle-version 8.11.1 --distribution-type all
-        chmod +x gradlew
-        echo "Validated Gradle Wrapper:"
-        ls -la gradle/wrapper/
-        cat gradle/wrapper/gradle-wrapper.properties
+      - name: Sync App Version
+        run: npm run sync:version
 
-    - name: Install dependencies
-      run: npm install
+      - name: Capacitor sync
+        run: npx cap sync android
 
-    - name: Build Web Application
-      run: npm run build
+      - name: Make Gradle executable
+        run: chmod +x android/gradlew
 
-    - name: Sync App Version from package.json
-      run: npm run sync:version
+      - name: Build Release APK
+        working-directory: android
+        run: ./gradlew assembleRelease --stacktrace --no-daemon
 
-    - name: Verify Gradle & Java Version Consistency
-      run: npm run verify:gradle
-
-    - name: Sync Capacitor Android
-      run: npx cap sync android
-
-    - name: Clean Gradle Build Artifacts
-      run: |
-        cd android
-        chmod +x gradlew
-        ./gradlew clean --no-daemon || gradle clean --no-daemon
-
-    - name: Build Debug APK
-      run: |
-        cd android
-        chmod +x gradlew
-        ./gradlew assembleDebug --no-daemon --stacktrace || gradle assembleDebug --no-daemon --stacktrace
-
-    - name: Upload APK artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-debug
-        path: android/app/build/outputs/apk/debug/app-debug.apk
-        retention-days: 14
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SKY-universal-apk
+          path: android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error

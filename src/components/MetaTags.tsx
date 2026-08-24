@@ -225,7 +225,7 @@ export function useMetaTags(props: MetaTagsProps = {}) {
 
   const siteUrl = typeof window !== 'undefined' && window.location.origin
     ? window.location.origin
-    : 'https://sachit-brown.vercel.app';
+    : 'https://sky-roms.vercel.app';
 
   let computedCanonical = props.canonicalUrl;
   if (!computedCanonical) {

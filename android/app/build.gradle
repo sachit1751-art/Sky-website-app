@@ -67,15 +67,6 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')
-
-    configurations.all {
-        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-            if (details.requested.group == 'com.android.support') {
-                details.because("Using AndroidX instead of legacy support library")
-                details.useVersion('28.0.0')
-            }
-        }
-    }
 }
 
 apply from: 'capacitor.build.gradle'

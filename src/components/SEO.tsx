@@ -237,7 +237,7 @@ export const SEO: React.FC<SEOProps> = ({
   // Compute canonical URL dynamically
   const siteUrl = typeof window !== 'undefined' && window.location.origin
     ? window.location.origin
-    : 'https://sachit-brown.vercel.app';
+    : 'https://sky-roms.vercel.app';
   
   let computedCanonical = canonicalUrl;
   if (!computedCanonical) {

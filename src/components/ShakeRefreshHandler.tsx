@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { RefreshCw, Smartphone } from 'lucide-react';
 import { useBackendData } from '../context/DataContext';
 import { useToast } from '../context/ToastContext';

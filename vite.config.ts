@@ -12,11 +12,14 @@ export default defineConfig(() => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
+        'react': path.resolve(__dirname, 'node_modules/react'),
+        'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
       },
-      dedupe: ['react', 'react-dom', 'react-router-dom', 'motion'],
+      dedupe: ['react', 'react-dom', 'react-router-dom', 'motion', 'motion/react'],
     },
     optimizeDeps: {
-      include: ['react', 'react-dom', 'react-router-dom', 'motion', 'motion/react'],
+      include: ['react', 'react-dom', 'react-router-dom'],
+      exclude: ['motion', 'motion/react'],
     },
     server: {
       port: 3000,
@@ -30,24 +33,6 @@ export default defineConfig(() => {
     build: {
       chunkSizeWarningLimit: 1400,
       sourcemap: true,
-      rollupOptions: {
-        output: {
-          manualChunks(id) {
-            if (id.includes('node_modules')) {
-              return 'vendor';
-            }
-            if (id.includes('/src/pages/admin/')) {
-              if (id.includes('LoginPage') || id.includes('RegisterPage') || id.includes('ResetPasswordPage')) {
-                return 'admin-auth';
-              }
-              return 'admin-core';
-            }
-            if (id.includes('/src/pages/')) {
-              return 'pages-public';
-            }
-          }
-        }
-      }
     }
   };
 });

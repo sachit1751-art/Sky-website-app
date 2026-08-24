@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { RomItem, SpecCategory, TeamMember, CommunityChannel, FAQItem, CoreValue } from '../../shared/types';
 import { apiFetch } from '../lib/api';
-import { TEAM_MEMBERS } from '../data';
+import { TEAM_MEMBERS, AOSP_ROMS, SPEC_CATEGORIES, CORE_VALUES, COMMUNITY_CHANNELS, COMMUNITY_FAQS } from '../data';
 import { Network } from '@capacitor/network';
 import { isNative } from '../lib/capacitor';
 
@@ -39,15 +39,26 @@ const CACHE_TTL_MS = 3 * 60 * 1000; // 3 minutes
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [roms, setRoms] = useState<RomItem[]>([]);
-  const [specs, setSpecs] = useState<SpecCategory[]>([]);
+  const [roms, setRoms] = useState<RomItem[]>(AOSP_ROMS);
+  const [specs, setSpecs] = useState<SpecCategory[]>(SPEC_CATEGORIES);
   const [team, setTeam] = useState<TeamMember[]>(TEAM_MEMBERS);
-  const [faqs, setFaqs] = useState<FAQItem[]>([]);
-  const [communityChannels, setCommunityChannels] = useState<CommunityChannel[]>([]);
-  const [coreValues, setCoreValues] = useState<CoreValue[]>([]);
-  const [config, setConfig] = useState<AppConfig | null>(null);
+  const [faqs, setFaqs] = useState<FAQItem[]>(COMMUNITY_FAQS);
+  const [communityChannels, setCommunityChannels] = useState<CommunityChannel[]>(COMMUNITY_CHANNELS);
+  const [coreValues, setCoreValues] = useState<CoreValue[]>(CORE_VALUES);
+  const [config, setConfig] = useState<AppConfig | null>({
+    appName: 'SkyOS Hub',
+    tagline: 'The Ultimate Custom ROM Portal for POCO M6 Pro 5G / Redmi 12 5G',
+    targetDevice: 'POCO M6 Pro 5G / Redmi 12 5G',
+    codename: 'sky / sky_in',
+    chipset: 'Qualcomm Snapdragon 4 Gen 2',
+    gpu: 'Adreno 613',
+    githubOrg: 'skyroms',
+    telegramSupport: 'https://t.me/Redmi125GSupport',
+    telegramChannel: 'https://t.me/Redmi125gChannel',
+    version: 'v3.5.0'
+  });
 
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 

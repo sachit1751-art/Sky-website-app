@@ -9,7 +9,8 @@ import {
   BACKEND_CORE_VALUES,
   BACKEND_COMMUNITY_CHANNELS,
   BACKEND_COMMUNITY_FAQS,
-  BACKEND_APP_CONFIG
+  BACKEND_APP_CONFIG,
+  BACKEND_AOSP_ROMS
 } from './backendData';
 
 const app = express();
@@ -393,13 +394,19 @@ async function getRomRecord(romIdOrName: string) {
 }
 
 async function getAllRomRecords() {
-  const { data, error } = await supabaseAdmin
-    .from('roms')
-    .select('*')
-    .order('created_at', { ascending: false });
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('roms')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-  if (error) throw new Error(`Database error listing ROMs: ${error.message}`);
-  return (data || []).map(mapRomToClient);
+    if (error || !data || data.length === 0) {
+      return BACKEND_AOSP_ROMS;
+    }
+    return data.map(mapRomToClient);
+  } catch (err) {
+    return BACKEND_AOSP_ROMS;
+  }
 }
 
 async function setRomRecord(romId: string, data: any) {
@@ -460,6 +467,7 @@ async function deleteRomRecord(romIdOrName: string) {
 
 // In-Memory Fallback for Feedback Resiliency (e.g. under fallback credentials or RLS errors)
 let inMemoryFeedback: any[] = [];
+let inMemoryErrorReports: any[] = [];
 const inMemoryVotes = new Map<string, Set<string>>();
 
 function generateUUID(): string {
@@ -1888,6 +1896,70 @@ app.delete('/api/admin/feedback/:id', verifySuperAdmin, async (req: any, res: Re
     return res.status(200).json({ success: true, message: 'Feedback entry deleted successfully.' });
   } catch (e: any) {
     return res.status(500).json({ error: e.message || 'Failed to delete feedback entry.' });
+  }
+});
+
+// 25. Submit Error Report (Public)
+app.post('/api/errors', async (req: Request, res: Response) => {
+  try {
+    const { message, stack, componentStack, url, userAgent, timestamp } = req.body;
+    const report = {
+      id: generateUUID(),
+      message: message || 'Unknown error',
+      stack: stack || '',
+      componentStack: componentStack || '',
+      url: url || '',
+      userAgent: userAgent || '',
+      timestamp: timestamp || new Date().toISOString()
+    };
+    inMemoryErrorReports.unshift(report);
+    if (inMemoryErrorReports.length > 200) inMemoryErrorReports.pop();
+
+    try {
+      await supabaseAdmin.from('error_reports').insert([{
+        message: report.message,
+        stack: report.stack,
+        component_stack: report.componentStack,
+        url: report.url,
+        user_agent: report.userAgent,
+        created_at: report.timestamp
+      }]);
+    } catch (dbErr) {
+      // Fallback to in-memory only if table doesn't exist yet
+    }
+
+    return res.status(200).json({ success: true, message: 'Crash report submitted successfully.' });
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message || 'Failed to submit crash report.' });
+  }
+});
+
+// 26. Admin Get Error Reports
+app.get('/api/admin/error-reports', verifyAdmin, async (req: Request, res: Response) => {
+  try {
+    let reports = [...inMemoryErrorReports];
+    try {
+      const { data, error } = await supabaseAdmin
+        .from('error_reports')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(100);
+      if (!error && data) {
+        reports = data.map((r: any) => ({
+          id: r.id,
+          message: r.message,
+          stack: r.stack,
+          componentStack: r.component_stack,
+          url: r.url,
+          userAgent: r.user_agent,
+          timestamp: r.created_at
+        }));
+      }
+    } catch (e) {}
+
+    return res.status(200).json({ success: true, reports });
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message || 'Failed to fetch error reports.' });
   }
 });
 

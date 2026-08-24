@@ -34,7 +34,8 @@ export const DashboardPage: React.FC = () => {
   const [allRoms, setAllRoms] = useState<RomItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'all' | 'my_projects' | 'feedback'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'my_projects' | 'feedback' | 'error_reports'>('all');
+  const [errorReports, setErrorReports] = useState<any[]>([]);
   const [pendingFeedbackCount, setPendingFeedbackCount] = useState<number>(0);
   const [diagnostics, setDiagnostics] = useState<any>(null);
   const { showToast } = useToast();
@@ -116,6 +117,21 @@ export const DashboardPage: React.FC = () => {
     } catch (e) {}
   };
 
+  // Fetches submitted error reports
+  const fetchErrorReports = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      const res = await apiFetch('/api/admin/error-reports', {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      const data = await res.json();
+      if (res.ok && Array.isArray(data.reports)) {
+        setErrorReports(data.reports);
+      }
+    } catch (e) {}
+  };
+
   // Fetches ROM releases from Supabase PostgreSQL database and merges with catalog
   const fetchRoms = async () => {
     setLoading(true);
@@ -188,9 +204,11 @@ export const DashboardPage: React.FC = () => {
   useEffect(() => {
     fetchRoms();
     fetchFeedbackCount();
+    fetchErrorReports();
     fetchDiagnostics();
     const interval = setInterval(() => {
       fetchFeedbackCount();
+      fetchErrorReports();
       fetchDiagnostics();
     }, 15000);
     return () => clearInterval(interval);
@@ -411,6 +429,12 @@ export const DashboardPage: React.FC = () => {
             >
               <Shield size={14} /> My Projects ({myRoms.length})
             </button>
+            <button
+              onClick={() => setActiveTab('error_reports')}
+              className={`px-5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${activeTab === 'error_reports' ? 'bg-white dark:bg-[#2C2A22] text-[#121212] dark:text-[#F4EFE6] shadow-sm' : 'text-[#787567] dark:text-[#BDB8A4] hover:text-[#121212] dark:hover:text-[#F4EFE6]'}`}
+            >
+              <ShieldAlert size={14} /> Crash Reports ({errorReports.length})
+            </button>
           </div>
 
           <div className="relative w-full sm:w-72">
@@ -572,15 +596,67 @@ export const DashboardPage: React.FC = () => {
 
           <div className="flex items-center justify-between mb-6 px-2">
             <h3 className="text-xs font-black text-[#787567] dark:text-[#BDB8A4] tracking-widest uppercase flex items-center gap-2">
-              {activeTab === 'all' ? 'ALL ROM RELEASES' : 'YOUR CLAIMED PROJECTS'} ({filteredRoms.length})
+              {activeTab === 'error_reports' ? 'SUBMITTED CRASH REPORTS' : activeTab === 'all' ? 'ALL ROM RELEASES' : 'YOUR CLAIMED PROJECTS'} ({activeTab === 'error_reports' ? errorReports.length : filteredRoms.length})
             </h3>
             <span className="text-[11px] text-[#787567] dark:text-[#BDB8A4] font-mono">
-              Click edit on any ROM to modify details & changelogs
+              {activeTab === 'error_reports' ? 'Real-time client exception logs' : 'Click edit on any ROM to modify details & changelogs'}
             </span>
           </div>
           
           <div className="space-y-4">
-            {loading ? (
+            {activeTab === 'error_reports' ? (
+              errorReports.length === 0 ? (
+                <SpotlightCard className="p-12 border border-dashed border-[#EBE4CF] dark:border-[#36342A] bg-transparent flex flex-col items-center text-center">
+                  <div className="w-16 h-16 rounded-full bg-green-500/10 text-green-500 flex items-center justify-center mb-6">
+                    <ShieldAlert size={32} />
+                  </div>
+                  <h4 className="text-2xl font-black text-[#121212] dark:text-[#F4EFE6] mb-2 tracking-tight">
+                    No Crash Reports Found
+                  </h4>
+                  <p className="text-[#787567] dark:text-[#BDB8A4] text-sm max-w-sm leading-relaxed">
+                    All systems are operating normally. No unhandled runtime exceptions or crash reports have been submitted by users.
+                  </p>
+                </SpotlightCard>
+              ) : (
+                errorReports.map((report) => (
+                  <SpotlightCard key={report.id} className="p-6 border border-red-500/20 bg-gradient-to-b from-red-500/[0.03] to-transparent shadow-xs space-y-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-500/10 text-red-500 border border-red-500/20">
+                            Crash Report
+                          </span>
+                          <span className="text-xs text-[#787567] dark:text-[#BDB8A4] font-mono">
+                            {new Date(report.timestamp).toLocaleString()}
+                          </span>
+                        </div>
+                        <h4 className="text-lg font-bold text-[#121212] dark:text-[#F4EFE6] font-mono break-all">
+                          {report.message}
+                        </h4>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+                      <div className="p-3 bg-white dark:bg-[#151410] rounded-xl border border-[#EBE4CF] dark:border-[#36342A]">
+                        <span className="text-[10px] font-bold text-[#787567] uppercase block mb-1">Source URL</span>
+                        <span className="text-[#121212] dark:text-[#F4EFE6] break-all">{report.url || 'N/A'}</span>
+                      </div>
+                      <div className="p-3 bg-white dark:bg-[#151410] rounded-xl border border-[#EBE4CF] dark:border-[#36342A]">
+                        <span className="text-[10px] font-bold text-[#787567] uppercase block mb-1">User Agent</span>
+                        <span className="text-[#787567] dark:text-[#BDB8A4] break-all">{report.userAgent || 'N/A'}</span>
+                      </div>
+                    </div>
+
+                    {report.stack && (
+                      <div className="p-4 bg-[#121212] text-[#F4EFE6] rounded-xl font-mono text-xs overflow-x-auto max-h-48 custom-scrollbar">
+                        <span className="text-[10px] text-[#787567] uppercase block mb-2 font-bold">Stack Trace:</span>
+                        <pre className="whitespace-pre-wrap">{report.stack}</pre>
+                      </div>
+                    )}
+                  </SpotlightCard>
+                ))
+              )
+            ) : loading ? (
               <DashboardSkeleton />
             ) : filteredRoms.length === 0 ? (
               <SpotlightCard className="p-8 sm:p-12 border border-dashed border-[#EBE4CF] dark:border-[#36342A] bg-transparent flex flex-col items-center text-center">

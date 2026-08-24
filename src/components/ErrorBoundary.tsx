@@ -1,5 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { AlertTriangle, RefreshCcw, Home, Trash2 } from 'lucide-react';
+import { AlertTriangle, RefreshCcw, Home, Trash2, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 import { SpotlightCard } from './SpotlightCard';
 
 interface Props {
@@ -9,6 +9,9 @@ interface Props {
 interface State {
   hasError: boolean;
   error: Error | null;
+  componentStack: string;
+  reportStatus: 'idle' | 'sending' | 'success' | 'error';
+  reportMessage: string;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
@@ -16,17 +19,20 @@ export class ErrorBoundary extends Component<Props, State> {
     super(props);
     this.state = {
       hasError: false,
-      error: null
+      error: null,
+      componentStack: '',
+      reportStatus: 'idle',
+      reportMessage: ''
     };
   }
 
-  public static getDerivedStateFromError(error: Error): State {
+  public static getDerivedStateFromError(error: Error): Partial<State> {
     return { hasError: true, error };
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Uncaught error:', error, errorInfo);
-    // Here you could send the error to an analytics service
+    this.setState({ componentStack: errorInfo?.componentStack || '' });
   }
 
   private handleReset = () => {
@@ -45,6 +51,37 @@ export class ErrorBoundary extends Component<Props, State> {
     }
   };
 
+  private handleReportError = async () => {
+    if (this.state.reportStatus === 'sending' || this.state.reportStatus === 'success') return;
+
+    this.setState({ reportStatus: 'sending', reportMessage: '' });
+    try {
+      const payload = {
+        message: this.state.error?.message || 'Unknown runtime error',
+        stack: this.state.error?.stack || '',
+        componentStack: this.state.componentStack,
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: new Date().toISOString()
+      };
+
+      const res = await fetch('/api/errors', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        this.setState({ reportStatus: 'success', reportMessage: 'Crash report successfully sent to Admin Dashboard.' });
+      } else {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to submit report');
+      }
+    } catch (e: any) {
+      this.setState({ reportStatus: 'error', reportMessage: e.message || 'Failed to send crash report.' });
+    }
+  };
+
   public render() {
     if (this.state.hasError) {
       return (
@@ -59,12 +96,12 @@ export class ErrorBoundary extends Component<Props, State> {
                 SYSTEM <span className="text-red-500">INTERRUPTION</span>
               </h1>
               
-              <p className="text-[#787567] dark:text-[#BDB8A4] text-lg font-medium mb-10 max-w-md mx-auto leading-relaxed">
+              <p className="text-[#787567] dark:text-[#BDB8A4] text-lg font-medium mb-8 max-w-md mx-auto leading-relaxed">
                 The application encountered an unexpected runtime exception. All security protocols remain active.
               </p>
 
               {this.state.error && (
-                <div className="mb-10 p-4 bg-[#F9F6E5] dark:bg-[#151410] rounded-2xl border border-[#EBE4CF] dark:border-[#36342A] text-left overflow-hidden">
+                <div className="mb-8 p-4 bg-[#F9F6E5] dark:bg-[#151410] rounded-2xl border border-[#EBE4CF] dark:border-[#36342A] text-left overflow-hidden">
                   <p className="text-[10px] font-black tracking-widest text-[#787567] dark:text-[#BDB8A4] uppercase mb-2">Technical Details</p>
                   <code className="text-xs font-mono text-red-500 break-all leading-tight block max-h-32 overflow-y-auto custom-scrollbar">
                     {this.state.error.message || this.state.error.toString()}
@@ -72,10 +109,36 @@ export class ErrorBoundary extends Component<Props, State> {
                 </div>
               )}
 
+              {/* Report Error to Admin Button & Status */}
+              <div className="mb-8">
+                {this.state.reportStatus === 'success' ? (
+                  <div className="flex items-center justify-center gap-2 py-3 px-4 bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 rounded-2xl text-xs font-bold">
+                    <CheckCircle2 size={16} />
+                    <span>{this.state.reportMessage}</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center gap-2">
+                    <button
+                      onClick={this.handleReportError}
+                      disabled={this.state.reportStatus === 'sending'}
+                      className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-[#C88A2B]/10 hover:bg-[#C88A2B]/20 text-[#C88A2B] dark:text-[#FDE694] font-bold text-xs rounded-2xl border border-[#C88A2B]/30 transition-all cursor-pointer disabled:opacity-50"
+                    >
+                      <Send size={14} />
+                      {this.state.reportStatus === 'sending' ? 'Sending Crash Report...' : 'REPORT ERROR TO ADMIN DASHBOARD'}
+                    </button>
+                    {this.state.reportStatus === 'error' && (
+                      <span className="text-xs text-red-500 flex items-center gap-1 font-medium">
+                        <AlertCircle size={12} /> {this.state.reportMessage}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <button
                   onClick={this.handleReload}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-[#121212] dark:bg-[#F4EFE6] text-white dark:text-[#121212] font-black rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-black/10"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-[#121212] dark:bg-[#F4EFE6] text-white dark:text-[#121212] font-black rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-black/10 cursor-pointer"
                 >
                   <RefreshCcw size={18} />
                   RELOAD SYSTEM
@@ -83,7 +146,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 
                 <button
                   onClick={this.handleReset}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-white dark:bg-[#151410] text-[#121212] dark:text-[#F4EFE6] font-black rounded-2xl border border-[#EBE4CF] dark:border-[#36342A] hover:bg-[#F9F6E5] dark:hover:bg-[#1F1E18] active:scale-[0.98] transition-all"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-white dark:bg-[#151410] text-[#121212] dark:text-[#F4EFE6] font-black rounded-2xl border border-[#EBE4CF] dark:border-[#36342A] hover:bg-[#F9F6E5] dark:hover:bg-[#1F1E18] active:scale-[0.98] transition-all cursor-pointer"
                 >
                   <Home size={18} />
                   RETURN HOME
@@ -92,7 +155,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
               <button
                 onClick={this.handleHardReset}
-                className="mt-8 flex items-center justify-center gap-2 text-[10px] font-black text-red-500 uppercase tracking-[0.2em] hover:underline mx-auto"
+                className="mt-8 flex items-center justify-center gap-2 text-[10px] font-black text-red-500 uppercase tracking-[0.2em] hover:underline mx-auto cursor-pointer"
               >
                 <Trash2 size={12} />
                 Perform Hard Reset
@@ -112,3 +175,4 @@ export class ErrorBoundary extends Component<Props, State> {
     return this.props.children;
   }
 }
+

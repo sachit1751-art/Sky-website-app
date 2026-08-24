@@ -53,17 +53,22 @@ export const RomCard: React.FC<RomCardProps> = memo(({
   return (
     <motion.div
       variants={staggerItemVariants}
+      whileHover={{ y: -3 }}
+      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
       style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 350px' }}
     >
       <SpotlightCard className="rounded-3xl">
-        <div 
-          className="group bg-[#FAF3DD]/50 dark:bg-[#1F1E18]/60 hover:bg-[#FAF3DD] dark:hover:bg-[#1F1E18] rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-[#EBE4CF] dark:border-[#36342A] transition-all duration-300 shadow-xs hover:shadow-md hover:border-[#FDE694]/60 dark:hover:border-[#FDE694]/40 relative"
+        <motion.div 
+          whileHover={{ borderColor: 'rgba(253, 230, 148, 0.6)' }}
+          className="group bg-[#FAF3DD]/50 dark:bg-[#1F1E18]/60 hover:bg-[#FAF3DD] dark:hover:bg-[#1F1E18] rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-[#EBE4CF] dark:border-[#36342A] transition-colors duration-300 shadow-xs hover:shadow-xl relative"
         >
           {/* Quick Action Buttons (Top-Right: Compare & Bookmark) */}
           <div className="absolute top-3.5 right-3.5 sm:top-5 sm:right-5 flex items-center gap-1.5 z-10">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={(e) => onToggleCompare(rom, e)}
-              className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all active:scale-95 cursor-pointer flex items-center gap-1 border ${
+              className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 border ${
                 isCompared
                   ? 'bg-[#FDE694] text-[#121210] border-[#FDE694] shadow-xs'
                   : 'text-[#787567] bg-[#FAF0CF]/60 dark:bg-[#151410] border-[#EBE4CF] dark:border-[#36342A] hover:text-[#121212] dark:hover:text-[#FAF3DD] hover:border-[#FDE694]/50'
@@ -74,14 +79,16 @@ export const RomCard: React.FC<RomCardProps> = memo(({
               <span className="hidden sm:inline">
                 {isCompared ? 'Compared' : '+ Compare'}
               </span>
-            </button>
+            </motion.button>
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.15, rotate: 5 }}
+              whileTap={{ scale: 0.9 }}
               onClick={(e) => {
                 e.stopPropagation();
                 onToggleSave(romId, e);
               }}
-              className={`p-2 rounded-xl transition-all active:scale-90 cursor-pointer ${
+              className={`p-2 rounded-xl transition-colors cursor-pointer ${
                 isSaved
                   ? 'text-amber-500 bg-amber-500/15'
                   : 'text-[#787567] bg-[#FAF0CF]/60 dark:bg-[#151410] hover:text-amber-500 hover:bg-amber-500/10'
@@ -89,7 +96,7 @@ export const RomCard: React.FC<RomCardProps> = memo(({
               title={isSaved ? "Remove from saved" : "Save ROM"}
             >
               <Star className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
-            </button>
+            </motion.button>
           </div>
 
           {/* Main Card Content: Stacks vertically on mobile, horizontal on lg+ */}
@@ -103,7 +110,10 @@ export const RomCard: React.FC<RomCardProps> = memo(({
               <div className="flex items-start sm:items-center gap-3.5 sm:gap-4">
                 {/* ROM Logo */}
                 {rom.logoUrl ? (
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square rounded-2xl overflow-hidden border border-[#EBE4CF] dark:border-[#36342A] shadow-xs shrink-0 group-hover:scale-105 transition-transform bg-white/20">
+                  <motion.div 
+                    whileHover={{ scale: 1.08, rotate: 2 }}
+                    className="w-12 h-12 sm:w-16 sm:h-16 aspect-square rounded-2xl overflow-hidden border border-[#EBE4CF] dark:border-[#36342A] shadow-xs shrink-0 bg-white/20"
+                  >
                     <img
                       src={rom.logoUrl}
                       alt={rom.name}
@@ -111,11 +121,14 @@ export const RomCard: React.FC<RomCardProps> = memo(({
                       decoding="async"
                       className="w-full h-full object-cover"
                     />
-                  </div>
+                  </motion.div>
                 ) : (
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-[#FDE694] flex items-center justify-center text-[#121212] font-black text-lg sm:text-2xl shadow-xs shrink-0 group-hover:scale-105 transition-transform">
+                  <motion.div 
+                    whileHover={{ scale: 1.08, rotate: 2 }}
+                    className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-[#FDE694] flex items-center justify-center text-[#121212] font-black text-lg sm:text-2xl shadow-xs shrink-0"
+                  >
                     {rom.name.charAt(0)}
-                  </div>
+                  </motion.div>
                 )}
 
                 {/* Title & Badges */}
@@ -173,17 +186,19 @@ export const RomCard: React.FC<RomCardProps> = memo(({
                 >
                   <span className="text-[10px] uppercase font-bold tracking-wider text-[#787567]/80 dark:text-[#BDB8A4]/80">By:</span>
                   {rom.maintainerUrl ? (
-                    <a
+                    <motion.a
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
                       href={rom.maintainerUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-1 font-bold text-[#49473E] dark:text-[#F4EFE6] hover:text-[#121212] dark:hover:text-[#FDE694] bg-[#FAF0CF]/70 dark:bg-[#2B2921]/80 hover:bg-[#FDE694] dark:hover:bg-[#36342A] px-2 py-0.5 rounded-lg border border-[#EBE4CF] dark:border-[#36342A] transition-all text-xs"
+                      className="inline-flex items-center gap-1 font-bold text-[#49473E] dark:text-[#F4EFE6] hover:text-[#121212] dark:hover:text-[#FDE694] bg-[#FAF0CF]/70 dark:bg-[#2B2921]/80 hover:bg-[#FDE694] dark:hover:bg-[#36342A] px-2 py-0.5 rounded-lg border border-[#EBE4CF] dark:border-[#36342A] transition-colors text-xs"
                       title={`Visit ${rom.maintainer}'s Profile`}
                     >
                       <Send className="w-2.5 h-2.5 text-sky-600 dark:text-sky-400" />
                       <span>{rom.maintainer}</span>
-                    </a>
+                    </motion.a>
                   ) : (
                     <span className="font-semibold text-[#49473E] dark:text-[#F4EFE6] bg-[#FAF0CF]/50 dark:bg-[#2B2921]/50 px-2 py-0.5 rounded-lg border border-[#EBE4CF] dark:border-[#36342A] text-xs">
                       {rom.maintainer}
@@ -227,19 +242,23 @@ export const RomCard: React.FC<RomCardProps> = memo(({
               className="flex flex-wrap sm:flex-nowrap items-center gap-2 pt-3 sm:pt-0 border-t border-[#EBE4CF]/70 dark:border-[#36342A]/70 lg:border-t-0 shrink-0"
             >
               {/* Changelog Modal Trigger Button */}
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => onSelectRom(rom)}
-                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-[#FAF0CF]/80 dark:bg-[#25231C] text-[#49473E] dark:text-[#F4EFE6] border border-[#EBE4CF] dark:border-[#36342A] hover:bg-[#FDE694] hover:text-[#121212] dark:hover:bg-[#FDE694] dark:hover:text-[#121212] transition-all cursor-pointer shadow-2xs active:scale-95"
+                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-[#FAF0CF]/80 dark:bg-[#25231C] text-[#49473E] dark:text-[#F4EFE6] border border-[#EBE4CF] dark:border-[#36342A] hover:bg-[#FDE694] hover:text-[#121212] dark:hover:bg-[#FDE694] dark:hover:text-[#121212] transition-colors cursor-pointer shadow-2xs"
                 title="Open detailed release notes modal"
               >
                 <FileText className="w-3.5 h-3.5" />
                 <span>Changelog</span>
-              </button>
+              </motion.button>
 
               {/* Copy Link Button */}
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={(e) => onCopyLink(rom.url, e)}
-                className={`inline-flex items-center justify-center p-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
+                className={`inline-flex items-center justify-center p-2.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer border ${
                   isThisCopied
                     ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30'
                     : 'bg-[#FAF0CF]/60 dark:bg-[#25231C] text-[#49473E] dark:text-[#F4EFE6] border-[#EBE4CF] dark:border-[#36342A] hover:bg-[#FAF0CF] dark:hover:bg-[#2B2921]'
@@ -251,12 +270,14 @@ export const RomCard: React.FC<RomCardProps> = memo(({
                 ) : (
                   <Copy className="w-3.5 h-3.5" />
                 )}
-              </button>
+              </motion.button>
 
               {/* Quick Inline Expand Toggle */}
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={(e) => onToggleExpand(romId, e)}
-                className={`inline-flex items-center justify-center p-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
+                className={`inline-flex items-center justify-center p-2.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer border ${
                   isExpanded
                     ? 'bg-[#49473E] text-[#FAF3DD] dark:bg-[#FDE694] dark:text-[#121212] border-transparent'
                     : 'bg-[#FAF0CF]/40 dark:bg-[#25231C]/60 text-[#787567] dark:text-[#BDB8A4] border-[#EBE4CF] dark:border-[#36342A] hover:bg-[#FAF0CF] dark:hover:bg-[#2B2921]'
@@ -268,19 +289,21 @@ export const RomCard: React.FC<RomCardProps> = memo(({
                 ) : (
                   <ChevronDown className="w-3.5 h-3.5" />
                 )}
-              </button>
+              </motion.button>
 
               {/* Primary CTA: Get ROM Button */}
-              <a
+              <motion.a
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 href={rom.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => onShowDownloadToast(rom.name, rom.url)}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black bg-[#FDE694] text-[#121212] hover:bg-[#FCE076] transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black bg-[#FDE694] text-[#121212] hover:bg-[#FCE076] transition-colors cursor-pointer shadow-sm shrink-0"
               >
                 <span>GET ROM</span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-[#121212]" />
-              </a>
+              </motion.a>
             </div>
           </div>
 
@@ -371,7 +394,7 @@ export const RomCard: React.FC<RomCardProps> = memo(({
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+        </motion.div>
       </SpotlightCard>
     </motion.div>
   );

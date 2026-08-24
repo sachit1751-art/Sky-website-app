@@ -1,7 +1,7 @@
 {
   "name": "react-example",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
@@ -9,9 +9,10 @@
     "start": "node dist/server.cjs",
     "clean": "rm -rf dist server.cjs",
     "lint": "tsc --noEmit",
+    "sync:version": "node scripts/sync-android-version.mjs",
     "cap:sync": "npx cap sync",
     "cap:open": "npx cap open android",
-    "build:android": "vite build && npx cap sync android"
+    "build:android": "node scripts/sync-android-version.mjs && vite build && npx cap sync android"
   },
   "dependencies": {
     "@capacitor-community/safe-area": "^8.0.1",

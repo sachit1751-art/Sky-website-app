@@ -16,7 +16,8 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 18
+        node-version: 20
+        cache: 'npm'
 
     - name: Set up JDK 17
       uses: actions/setup-java@v4
@@ -24,27 +25,42 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Install dependencies & Build Web
+    - name: Install dependencies
+      run: npm install
+
+    - name: Debug Dependencies & Node Modules
       run: |
-        npm ci
-        npm run build
+        echo "=== package.json contents ==="
+        cat package.json
+        echo ""
+        echo "=== Top-level node_modules ==="
+        ls -la node_modules/
+        echo ""
+        echo "=== Key Capacitor Packages ==="
+        ls -la node_modules/@capacitor/ || true
+
+    - name: Build Web Application
+      run: npm run build
 
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
 
+    - name: Sync App Version from package.json
+      run: npm run sync:version
+
     - name: Sync Capacitor Android
-      run: |
-        npx cap sync android
+      run: npx cap sync android
 
     - name: Build Debug APK
       run: |
         cd android
         chmod +x gradlew
-        ./gradlew assembleDebug
+        ./gradlew assembleDebug --no-daemon
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
         path: android/app/build/outputs/apk/debug/app-debug.apk
-        
+        retention-days: 14
+

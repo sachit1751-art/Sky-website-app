@@ -309,27 +309,27 @@ export default function App() {
   return (
     <HelmetProvider>
       <ErrorBoundary>
-        <PerformanceProvider>
-          <ThemeProvider>
-            <AccessibilityProvider>
-              <ToastProvider>
-                <AuthProvider>
-                  <DataProvider>
-                    <SessionManager />
-                    <ShakeRefreshHandler />
-                    <BrowserRouter>
+        <BrowserRouter>
+          <PerformanceProvider>
+            <ThemeProvider>
+              <AccessibilityProvider>
+                <ToastProvider>
+                  <AuthProvider>
+                    <DataProvider>
+                      <SessionManager />
+                      <ShakeRefreshHandler />
                       <AndroidNativeBridge />
                       <AndroidBackButtonHandler />
                       <GlobalKeyboardShortcuts />
                       <AccessibilityToolbar />
                       <AnimatedRoutes />
-                    </BrowserRouter>
-                  </DataProvider>
-                </AuthProvider>
-              </ToastProvider>
-            </AccessibilityProvider>
-          </ThemeProvider>
-        </PerformanceProvider>
+                    </DataProvider>
+                  </AuthProvider>
+                </ToastProvider>
+              </AccessibilityProvider>
+            </ThemeProvider>
+          </PerformanceProvider>
+        </BrowserRouter>
       </ErrorBoundary>
     </HelmetProvider>
   );

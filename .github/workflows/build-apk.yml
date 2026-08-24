@@ -13,6 +13,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Detect and Configure Node CI Compatibility
+      run: |
+        chmod +x ./scripts/detect-node-compat.sh || true
+        ./scripts/detect-node-compat.sh
+
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:

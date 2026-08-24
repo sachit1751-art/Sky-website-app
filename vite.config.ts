@@ -15,10 +15,10 @@ export default defineConfig(() => {
         'react': path.resolve(__dirname, 'node_modules/react'),
         'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
       },
-      dedupe: ['react', 'react-dom', 'react-router-dom', 'motion', 'motion/react'],
+      dedupe: ['react', 'react-dom', 'react-router', 'react-router-dom', 'motion', 'motion/react'],
     },
     optimizeDeps: {
-      include: ['react', 'react-dom', 'react-router-dom'],
+      include: ['react', 'react-dom', 'react-router', 'react-router-dom'],
       exclude: ['motion', 'motion/react'],
     },
     server: {

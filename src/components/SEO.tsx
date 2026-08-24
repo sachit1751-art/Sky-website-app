@@ -169,6 +169,35 @@ const ROUTE_SEO_MAP: Record<string, RouteMetaConfig> = {
   },
 };
 
+function useSafeLocation() {
+  try {
+    const location = useLocation();
+    if (location && location.pathname) {
+      return location;
+    }
+  } catch (e) {
+    // Gracefully handle if called outside Router context or during initial hydration
+  }
+
+  if (typeof window !== 'undefined' && window.location) {
+    return {
+      pathname: window.location.pathname || '/',
+      search: window.location.search || '',
+      hash: window.location.hash || '',
+      state: null,
+      key: 'safe-fallback',
+    };
+  }
+
+  return {
+    pathname: '/',
+    search: '',
+    hash: '',
+    state: null,
+    key: 'safe-fallback',
+  };
+}
+
 export const SEO: React.FC<SEOProps> = ({
   title,
   description,
@@ -183,7 +212,7 @@ export const SEO: React.FC<SEOProps> = ({
   noIndex,
   jsonLd,
 }) => {
-  const location = useLocation();
+  const location = useSafeLocation();
   const currentPath = location.pathname;
 
   // Retrieve route-specific defaults based on current pathname

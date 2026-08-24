@@ -9,6 +9,7 @@
     "start": "node dist/server.cjs",
     "clean": "rm -rf dist server.cjs",
     "lint": "tsc --noEmit",
+    "detect:node-compat": "node scripts/detect-node-compat.mjs",
     "verify:gradle": "node verify-gradle-config.mjs",
     "sync:version": "node scripts/sync-android-version.mjs",
     "cap:sync": "npx cap sync",

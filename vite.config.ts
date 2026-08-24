@@ -11,15 +11,12 @@ export default defineConfig(() => {
     ],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
-        'react': path.resolve(__dirname, 'node_modules/react'),
-        'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
+        '@': path.resolve(__dirname, './src'),
       },
       dedupe: ['react', 'react-dom', 'react-router', 'react-router-dom', 'motion', 'motion/react'],
     },
     optimizeDeps: {
-      include: ['react', 'react-dom', 'react-router', 'react-router-dom'],
-      exclude: ['motion', 'motion/react'],
+      include: ['react', 'react-dom', 'react-router', 'react-router-dom', 'motion/react'],
     },
     server: {
       port: 3000,

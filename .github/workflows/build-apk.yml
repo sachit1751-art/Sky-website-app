@@ -3,7 +3,12 @@ name: Build Android APK
 on:
   push:
     branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
   workflow_dispatch:
+
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: 'true'
 
 jobs:
   build:
@@ -18,23 +23,24 @@ jobs:
         chmod +x ./scripts/detect-node-compat.sh || true
         ./scripts/detect-node-compat.sh
 
-    - name: Set up Node.js
+    - name: Set up Node.js 20
       uses: actions/setup-node@v4
       with:
-        node-version: 22
+        node-version: '20'
         cache: 'npm'
 
-    - name: Set up JDK 21 (JavaVersion.VERSION_21)
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
-        java-version: '21'
+        java-version: '17'
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v4
       with:
         gradle-version: 8.11.1
         cache-read-only: false
+        validate-wrappers: false
 
     - name: Ensure Gradle Wrapper matches AGP 8.7.3 requirements
       run: |
@@ -48,28 +54,14 @@ jobs:
         zipStoreBase=GRADLE_USER_HOME
         zipStorePath=wrapper/dists
         EOF
-        echo "Validated Gradle Wrapper for AGP 8.7.3:"
+        echo "Validated Gradle Wrapper for AGP 8.7.3 & JDK 17:"
         cat android/gradle/wrapper/gradle-wrapper.properties
 
     - name: Install dependencies
       run: npm install
 
-    - name: Debug Dependencies & Node Modules
-      run: |
-        echo "=== package.json contents ==="
-        cat package.json
-        echo ""
-        echo "=== Top-level node_modules ==="
-        ls -la node_modules/
-        echo ""
-        echo "=== Key Capacitor Packages ==="
-        ls -la node_modules/@capacitor/ || true
-
     - name: Build Web Application
       run: npm run build
-
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
 
     - name: Sync App Version from package.json
       run: npm run sync:version
@@ -77,22 +69,8 @@ jobs:
     - name: Verify Gradle & Java Version Consistency
       run: npm run verify:gradle
 
-    - name: Verify Resolved Capacitor Plugins & Native Dependencies
-      run: |
-        echo "=== Installed Capacitor Plugins ==="
-        npm list --depth=0 | grep -E "(@capacitor|capacitor)" || true
-        echo ""
-        echo "=== Capacitor Discovered Native Plugins ==="
-        npx cap ls android || npx cap ls || true
-
     - name: Sync Capacitor Android
       run: npx cap sync android
-
-    - name: Clean Gradle Build Cache
-      run: |
-        cd android
-        chmod +x gradlew
-        ./gradlew clean --no-daemon
 
     - name: Build Debug APK
       run: |

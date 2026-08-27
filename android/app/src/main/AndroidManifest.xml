@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.sky.roms">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -40,9 +42,12 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="sky-roms.vercel.app" />
-                <data android:scheme="http" android:host="sky-roms.vercel.app" />
-                <data android:scheme="https" android:host="*.run.app" />
+                <data android:scheme="https" />
+                <data android:host="sky-roms.vercel.app" />
+                <data android:scheme="http" />
+                <data android:host="sky-roms.vercel.app" />
+                <data android:scheme="https" />
+                <data android:host="*.run.app" />
             </intent-filter>
 
         </activity>
@@ -57,9 +62,5 @@
                 android:resource="@xml/file_paths" />
         </provider>
     </application>
-
-    <!-- Permissions -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 </manifest>
 

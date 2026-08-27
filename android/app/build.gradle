@@ -51,6 +51,16 @@ android {
     }
 }
 
+configurations.configureEach {
+    resolutionStrategy {
+        force "androidx.core:core:1.15.0"
+        force "androidx.core:core-ktx:1.15.0"
+        force "androidx.activity:activity:1.10.0"
+        force "androidx.activity:activity-ktx:1.10.0"
+        force "androidx.appcompat:appcompat:1.7.0"
+    }
+}
+
 repositories {
     flatDir {
         dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'

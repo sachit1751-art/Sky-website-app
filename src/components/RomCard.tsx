@@ -29,6 +29,7 @@ interface RomCardProps {
   onCopyLink: (url: string, e: React.MouseEvent) => void;
   onToggleExpand: (id: string, e: React.MouseEvent) => void;
   onShowDownloadToast: (name: string, url: string) => void;
+  onAskAi?: (rom: RomItem, e: React.MouseEvent) => void;
 }
 
 export const RomCard: React.FC<RomCardProps> = memo(({
@@ -45,6 +46,7 @@ export const RomCard: React.FC<RomCardProps> = memo(({
   onCopyLink,
   onToggleExpand,
   onShowDownloadToast,
+  onAskAi,
 }) => {
   const isBeta = rom.description?.toLowerCase().includes('beta');
   const isOfficial = rom.status === 'Official';
@@ -252,6 +254,20 @@ export const RomCard: React.FC<RomCardProps> = memo(({
                 <FileText className="w-3.5 h-3.5" />
                 <span>Changelog</span>
               </motion.button>
+
+              {/* Ask AI Button */}
+              {onAskAi && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={(e) => onAskAi(rom, e)}
+                  className="inline-flex items-center justify-center gap-1 px-3 py-2.5 rounded-xl text-xs font-bold bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 transition-colors cursor-pointer shadow-2xs"
+                  title="Ask Gemini AI about this ROM"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                  <span className="hidden sm:inline">Ask AI</span>
+                </motion.button>
+              )}
 
               {/* Copy Link Button */}
               <motion.button

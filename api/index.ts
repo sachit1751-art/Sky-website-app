@@ -12,6 +12,7 @@ import {
   BACKEND_APP_CONFIG,
   BACKEND_AOSP_ROMS
 } from './backendData';
+import { handleGeminiChat } from './gemini';
 
 const app = express();
 app.set('trust proxy', 1);
@@ -746,6 +747,14 @@ const voteLimiter = rateLimit({
   windowMs: 5 * 60 * 1000,
   max: 30,
   message: { error: 'Too many voting attempts from this IP, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const geminiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  message: { error: 'Too many AI requests. Please slow down and try again in a minute.' },
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -1962,6 +1971,9 @@ app.get('/api/admin/error-reports', verifyAdmin, async (req: Request, res: Respo
     return res.status(500).json({ error: e.message || 'Failed to fetch error reports.' });
   }
 });
+
+// 27. Gemini Multi-turn Chat Endpoint (Streaming & Non-Streaming)
+app.post('/api/gemini/chat', geminiLimiter, handleGeminiChat);
 
 // 404 Route Handler for /api routes
 app.use('/api/*', (req: Request, res: Response) => {

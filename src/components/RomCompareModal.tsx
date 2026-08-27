@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { X, Check, ExternalLink, Download, Battery, ShieldCheck, Cpu, Code, Users, Sparkles, Trash2 } from 'lucide-react';
 import { RomItem } from '../../shared/types';
 
@@ -36,13 +37,13 @@ export const RomCompareModal: React.FC<RomCompareModalProps> = ({
     );
   };
 
-  return (
+  return createPortal(
     <div 
       id="rom-compare-modal-container"
       role="dialog" 
       aria-modal="true" 
       aria-label="ROM Comparison Tool" 
-      className="fixed inset-0 z-[110] flex items-center justify-center p-3 sm:p-6 p-safe bg-black/80 animate-in fade-in duration-200 overflow-y-auto"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 p-safe bg-black/80 animate-in fade-in duration-200 overflow-y-auto"
     >
       <div className="relative w-full max-w-5xl bg-[#1C1B17] border border-[#36342A] rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col text-[#FAF3DD]">
         
@@ -223,6 +224,7 @@ export const RomCompareModal: React.FC<RomCompareModalProps> = ({
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

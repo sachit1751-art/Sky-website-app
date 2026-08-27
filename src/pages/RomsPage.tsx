@@ -13,6 +13,7 @@ import { RomDetailsModal } from '../components/RomDetailsModal';
 import { RomCompareModal } from '../components/RomCompareModal';
 import { RomCard } from '../components/RomCard';
 import { TextLoop } from '../components/TextLoop';
+import { RomChatbot } from '../components/RomChatbot';
 import { useToast } from '../context/ToastContext';
 import { useScrollManager } from '../hooks/useScrollManager';
 import { supabase } from '../lib/supabase';
@@ -35,7 +36,11 @@ import {
   Share2,
   Battery,
   Star,
-  ExternalLink
+  ExternalLink,
+  Bot,
+  Zap,
+  Flame,
+  MessageSquare
 } from 'lucide-react';
 import {
   AnimatedSearch,
@@ -92,9 +97,16 @@ export const RomsPage: React.FC = () => {
   const [compareList, setCompareList] = useState<RomItem[]>([]);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState<boolean>(false);
   const [expandedRomId, setExpandedRomId] = useState<string | null>(null);
+  const [isChatbotOpen, setIsChatbotOpen] = useState<boolean>(false);
+  const [chatInitialPrompt, setChatInitialPrompt] = useState<string | undefined>(undefined);
+  const [chatTargetRom, setChatTargetRom] = useState<RomItem | null>(null);
 
   // Android hardware back button handling for active overlays on RomsPage
   useAndroidBackButton(() => {
+    if (isChatbotOpen) {
+      setIsChatbotOpen(false);
+      return true;
+    }
     if (isSidebarOpen) {
       setIsSidebarOpen(false);
       return true;
@@ -108,7 +120,7 @@ export const RomsPage: React.FC = () => {
       return true;
     }
     return false;
-  }, 70, isSidebarOpen || isCompareModalOpen || selectedRom !== null);
+  }, 70, isChatbotOpen || isSidebarOpen || isCompareModalOpen || selectedRom !== null);
 
   useEffect(() => {
     const param = searchParams.get('search');
@@ -209,6 +221,20 @@ export const RomsPage: React.FC = () => {
   const handleShowDownloadToast = useCallback((name: string, url: string) => {
     showDownloadToast(name, url);
   }, [showDownloadToast]);
+
+  const handleAskAi = useCallback((rom?: RomItem, promptText?: string) => {
+    if (rom) {
+      setChatTargetRom(rom);
+      setChatInitialPrompt(promptText || `Tell me about ${rom.name} (Android ${rom.androidVersion}) by ${rom.maintainer}. How is its battery endurance and daily driver stability?`);
+    } else if (promptText) {
+      setChatInitialPrompt(promptText);
+      setChatTargetRom(null);
+    } else {
+      setChatInitialPrompt(undefined);
+      setChatTargetRom(null);
+    }
+    setIsChatbotOpen(true);
+  }, []);
 
   // Helper to determine mirror host name
   const getMirrorLabel = useCallback((url: string): string => {
@@ -651,6 +677,65 @@ export const RomsPage: React.FC = () => {
         </p>
       </div>
 
+      {/* Gemini AI ROM Assistant Interactive Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-[#FAF3DD] via-[#FAF0CF]/60 to-[#FDE694]/20 dark:from-[#1A1914] dark:via-[#161511] dark:to-[#221F14] border border-[#EBE4CF] dark:border-[#36342A] shadow-xs relative overflow-hidden"
+      >
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-3.5 min-w-0">
+            <div className="w-10 h-10 rounded-2xl bg-[#FDE694] dark:bg-[#FDE694] flex items-center justify-center text-[#121212] shadow-xs shrink-0">
+              <Sparkles className="w-5 h-5 animate-pulse" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm sm:text-base font-black text-[#121212] dark:text-[#F4EFE6] tracking-tight">
+                  Need Help Choosing a ROM? Ask SKY AI
+                </h3>
+                <span className="px-2 py-0.5 text-[9px] font-mono font-bold uppercase rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20 shrink-0">
+                  Gemini Multi-turn
+                </span>
+              </div>
+              <p className="text-xs text-[#787567] dark:text-[#BDB8A4] mt-0.5 line-clamp-1 sm:line-clamp-none">
+                Compare battery efficiency, get step-by-step flashing guides, or troubleshoot boot errors with tailored AI models.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => handleAskAi()}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-[#FDE694] text-[#121212] font-black text-xs uppercase tracking-wider hover:bg-amber-300 active:scale-95 transition-all shadow-xs cursor-pointer"
+            >
+              <Bot className="w-4 h-4" />
+              <span>Launch AI Chat</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Quick Question Chips */}
+        <div className="mt-3 pt-3 border-t border-[#EBE4CF]/70 dark:border-[#36342A]/70 flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <span className="text-[10px] font-bold text-[#787567] dark:text-[#BDB8A4] uppercase shrink-0 flex items-center gap-1">
+            <Zap className="w-3 h-3 text-amber-500" /> Quick Ask:
+          </span>
+          {[
+            "Which ROM has the best battery life?",
+            "Compare PixelOS vs crDroid",
+            "How to flash Android 17 on sky?",
+            "Fix bootloop after flashing"
+          ].map((promptText, i) => (
+            <button
+              key={i}
+              onClick={() => handleAskAi(undefined, promptText)}
+              className="px-2.5 py-1 rounded-full text-xs font-medium bg-white/80 dark:bg-[#1F1E18] text-[#49473E] dark:text-[#F4EFE6] border border-[#EBE4CF] dark:border-[#36342A] hover:border-amber-400 hover:text-amber-600 dark:hover:text-amber-300 transition-all whitespace-nowrap shrink-0 cursor-pointer text-left"
+            >
+              {promptText}
+            </button>
+          ))}
+        </div>
+      </motion.div>
+
       {/* Search & Filter Controls */}
       <div className="space-y-4 pt-2 w-full">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 w-full">
@@ -950,6 +1035,10 @@ export const RomsPage: React.FC = () => {
                     onCopyLink={handleCopyLink}
                     onToggleExpand={toggleExpandRom}
                     onShowDownloadToast={handleShowDownloadToast}
+                    onAskAi={(rom, e) => {
+                      e?.stopPropagation();
+                      handleAskAi(rom);
+                    }}
                   />
                 </div>
               );
@@ -971,7 +1060,41 @@ export const RomsPage: React.FC = () => {
         onClose={() => setSelectedRom(null)}
         onCopyUrl={(url) => handleCopyLink(url)}
         isCopied={selectedRom ? copiedUrl === selectedRom.url : false}
+        onAskAi={(rom) => {
+          setSelectedRom(null);
+          handleAskAi(rom);
+        }}
       />
+
+      {/* Multi-turn Gemini AI Chatbot Modal */}
+      <RomChatbot
+        roms={roms}
+        isOpen={isChatbotOpen}
+        onClose={() => {
+          setIsChatbotOpen(false);
+          setChatTargetRom(null);
+          setChatInitialPrompt(undefined);
+        }}
+        initialPrompt={chatInitialPrompt}
+        targetRom={chatTargetRom}
+      />
+
+      {/* Floating Gemini AI Trigger FAB */}
+      <motion.button
+        whileHover={{ scale: 1.06, y: -2 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => handleAskAi()}
+        className="fixed bottom-6 left-6 z-[75] flex items-center gap-2.5 px-4 py-3 bg-[#1C1B17] dark:bg-[#FDE694] text-[#FAF3DD] dark:text-[#121212] rounded-full shadow-2xl border border-[#36342A] dark:border-transparent cursor-pointer group"
+        aria-label="Open Gemini AI Assistant"
+      >
+        <div className="w-6 h-6 rounded-full bg-[#FDE694] dark:bg-[#1C1B17] text-[#121212] dark:text-[#FDE694] flex items-center justify-center shrink-0">
+          <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+        </div>
+        <span className="text-xs font-black tracking-wide uppercase">
+          Ask Gemini AI
+        </span>
+        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+      </motion.button>
 
       {/* Side-by-Side ROM Comparison Modal */}
       {isCompareModalOpen && (

@@ -16,13 +16,15 @@ interface RomDetailsModalProps {
   onClose: () => void;
   onCopyUrl: (url: string) => void;
   isCopied: boolean;
+  onAskAi?: (rom: RomItem) => void;
 }
 
 export const RomDetailsModal: React.FC<RomDetailsModalProps> = ({
   rom: initialRom,
   onClose,
   onCopyUrl,
-  isCopied
+  isCopied,
+  onAskAi
 }) => {
   const { showDownloadToast } = useToast();
   const { tier } = usePerformanceTier();
@@ -508,6 +510,20 @@ export const RomDetailsModal: React.FC<RomDetailsModalProps> = ({
                 <Share2 className="w-4 h-4" />
                 <span>Share</span>
               </button>
+
+              {onAskAi && (
+                <button
+                  onClick={() => {
+                    triggerHaptic('light');
+                    onAskAi(rom);
+                  }}
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 transition-all cursor-pointer"
+                  title="Ask Gemini AI about this ROM"
+                >
+                  <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
+                  <span>Ask AI</span>
+                </button>
+              )}
             </div>
 
             <a

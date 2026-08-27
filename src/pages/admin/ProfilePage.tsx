@@ -82,7 +82,7 @@ export const ProfilePage: React.FC = () => {
     : "Configure your SKY device maintainer profile, public links, and bio.";
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
+    <div className="max-w-4xl mx-auto px-4 pt-12 pb-28 sm:py-12">
       <SEO
         title={profileTitle}
         description={profileDesc}

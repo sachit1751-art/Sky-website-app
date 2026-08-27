@@ -397,6 +397,11 @@ export const RomsPage: React.FC = () => {
     overscan: 5,
   });
 
+  // Re-measure virtualized rows when dynamic list heights or filter states change to avoid overlaps
+  useEffect(() => {
+    rowVirtualizer.measure();
+  }, [expandedRomId, sortedAndFilteredRoms, rowVirtualizer]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Escape to close
@@ -1084,7 +1089,7 @@ export const RomsPage: React.FC = () => {
         whileHover={{ scale: 1.06, y: -2 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => handleAskAi()}
-        className="fixed bottom-6 left-6 z-[75] flex items-center gap-2.5 px-4 py-3 bg-[#1C1B17] dark:bg-[#FDE694] text-[#FAF3DD] dark:text-[#121212] rounded-full shadow-2xl border border-[#36342A] dark:border-transparent cursor-pointer group"
+        className="fixed bottom-36 sm:bottom-20 md:bottom-6 left-4 md:left-40 z-[75] flex items-center gap-2.5 px-4 py-3 bg-[#1C1B17] dark:bg-[#FDE694] text-[#FAF3DD] dark:text-[#121212] rounded-full shadow-2xl border border-[#36342A] dark:border-transparent cursor-pointer group"
         aria-label="Open Gemini AI Assistant"
       >
         <div className="w-6 h-6 rounded-full bg-[#FDE694] dark:bg-[#1C1B17] text-[#121212] dark:text-[#FDE694] flex items-center justify-center shrink-0">
@@ -1112,7 +1117,7 @@ export const RomsPage: React.FC = () => {
 
       {/* Floating Compare Dock Bar */}
       {compareList.length > 0 && (
-        <div className="fixed bottom-20 sm:bottom-6 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto sm:right-8 z-[80] flex items-center gap-3 p-3 pl-4 bg-[#1C1B17] border border-[#36342A] rounded-2xl shadow-2xl text-[#FAF3DD] animate-in fade-in slide-in-from-bottom-3">
+        <div className="fixed bottom-24 sm:bottom-6 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto sm:right-24 z-[80] flex items-center gap-3 p-3 pl-4 bg-[#1C1B17] border border-[#36342A] rounded-2xl shadow-2xl text-[#FAF3DD] animate-in fade-in slide-in-from-bottom-3">
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-[#FDE694]" />
             <span className="text-xs font-bold">{compareList.length} ROMs selected</span>
@@ -1144,7 +1149,7 @@ export const RomsPage: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.5 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="fixed bottom-8 right-8 p-3 rounded-full bg-[#FDE694] text-[#121212] shadow-lg hover:scale-110 transition-all z-50"
+            className="fixed bottom-24 md:bottom-8 right-4 md:right-8 p-3 rounded-full bg-[#FDE694] text-[#121212] shadow-lg hover:scale-110 transition-all z-50"
             aria-label="Back to top"
           >
             <ArrowUp className="w-6 h-6" />

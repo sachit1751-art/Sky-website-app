@@ -125,7 +125,7 @@ export const ApproveAdminsPage: React.FC = () => {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+        className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-28 sm:py-12"
       >
         <header className="mb-10">
           <Link 

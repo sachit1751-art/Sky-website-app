@@ -14,7 +14,7 @@ export const FeedbackAdminPage: React.FC = () => {
         canonicalUrl="/admin/feedback"
         noIndex={true}
       />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-28 sm:py-12">
         {/* Back link & Header */}
         <div className="mb-8">
           <Link

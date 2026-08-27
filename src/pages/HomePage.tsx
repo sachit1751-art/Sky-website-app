@@ -18,7 +18,7 @@ import { TextLoop } from '../components/TextLoop';
 export const HomePage: React.FC = () => {
   const [isFutureModalOpen, setIsFutureModalOpen] = React.useState(false);
   return (
-    <div className="space-y-12 md:space-y-24 pb-20">
+    <div className="space-y-12 md:space-y-24 pb-28 md:pb-20">
       <SEO
         title="Built for Everyone"
         description="A community-driven Android device built to be different. Unthrottled performance, open hardware philosophy, and transparent community collaboration."

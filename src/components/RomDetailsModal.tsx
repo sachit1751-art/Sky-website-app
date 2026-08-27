@@ -268,7 +268,7 @@ export const RomDetailsModal: React.FC<RomDetailsModalProps> = ({
                 <h4 className="text-xs font-bold uppercase tracking-wider text-[#787567] dark:text-[#BDB8A4]">
                   Overview & Build Details
                 </h4>
-                <div className="p-4 rounded-2xl bg-[#FAF0CF]/50 dark:bg-[#14130F]/60 border border-[#EBE4CF] dark:border-[#36342A] text-sm text-[#49473E] dark:text-[#F4EFE6] leading-relaxed markdown-body">
+                <div className="p-4 rounded-2xl bg-[#FAF0CF]/50 dark:bg-[#14130F]/60 border border-[#EBE4CF] dark:border-[#36342A] text-sm text-[#49473E] dark:text-[#F4EFE6] leading-relaxed markdown-body break-words overflow-hidden min-w-0">
                   <Markdown>{rom.description}</Markdown>
                 </div>
               </div>
@@ -285,7 +285,7 @@ export const RomDetailsModal: React.FC<RomDetailsModalProps> = ({
                 </div>
                 <ul className="space-y-2.5 p-4 sm:p-5 rounded-2xl bg-[#FAF0CF]/50 dark:bg-[#14130F]/60 border border-[#EBE4CF] dark:border-[#36342A]">
                   {rom.changelog.map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-xs sm:text-sm text-[#49473E] dark:text-[#F4EFE6] leading-relaxed markdown-body">
+                    <li key={i} className="flex items-start gap-3 text-xs sm:text-sm text-[#49473E] dark:text-[#F4EFE6] leading-relaxed markdown-body min-w-0 break-words">
                       <span className="w-2 h-2 rounded-full bg-[#FDE694] dark:bg-[#FDE694] mt-1.5 shrink-0 shadow-xs" />
                       <div className="flex-1">
                         <Markdown>{item}</Markdown>

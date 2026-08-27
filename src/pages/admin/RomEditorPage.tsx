@@ -438,7 +438,7 @@ export const RomEditorPage: React.FC = () => {
     : "Configure and publish a new custom ROM, recovery, or kernel build for POCO M6 Pro 5G & Redmi 12 5G (sky / sm4450).";
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-12">
+    <div className="max-w-5xl mx-auto px-4 pt-12 pb-28 sm:py-12">
       <SEO
         title={romEditorTitle}
         description={romEditorDescription}

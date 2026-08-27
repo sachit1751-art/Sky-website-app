@@ -580,7 +580,7 @@ How can I assist your flashing journey today?`,
                       {isUser ? (
                         <p className="whitespace-pre-wrap">{msg.content}</p>
                       ) : msg.content ? (
-                        <div className="prose prose-sm dark:prose-invert max-w-none text-xs sm:text-sm prose-pre:bg-black/80 prose-pre:text-amber-300 prose-pre:rounded-xl prose-code:font-mono prose-headings:font-bold prose-headings:text-inherit">
+                        <div className="prose prose-sm dark:prose-invert max-w-none text-xs sm:text-sm prose-pre:bg-black/80 prose-pre:text-amber-300 prose-pre:rounded-xl prose-code:font-mono prose-headings:font-bold prose-headings:text-inherit break-words overflow-hidden prose-pre:overflow-x-auto">
                           <Markdown>{msg.content}</Markdown>
                         </div>
                       ) : (

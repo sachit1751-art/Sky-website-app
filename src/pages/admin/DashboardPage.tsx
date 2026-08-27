@@ -341,7 +341,7 @@ export const DashboardPage: React.FC = () => {
         canonicalUrl="/admin"
         noIndex={true}
       />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-28 sm:py-12">
       {authLoading ? (
         <HeaderSkeleton />
       ) : (
@@ -695,7 +695,7 @@ export const DashboardPage: React.FC = () => {
               filteredRoms.map((rom) => (
                 <SpotlightCard key={rom.id || rom.name} style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 100px' }} className="p-6 border border-[#EBE4CF] dark:border-[#2C2A22] bg-gradient-to-b from-[#FFFDF7] to-[#FAF5E6] dark:from-[#181712] dark:to-[#12110D] shadow-xs group">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                    <div className="flex items-center gap-5">
+                    <div className="flex flex-col xs:flex-row xs:items-center gap-4 sm:gap-5 min-w-0">
                       <div className="w-14 h-14 aspect-square rounded-2xl bg-white dark:bg-[#151410] border border-[#EBE4CF] dark:border-[#36342A] flex items-center justify-center overflow-hidden shrink-0">
                         {rom.logoUrl ? (
                           <img src={rom.logoUrl} alt={rom.name} decoding="async" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
@@ -706,28 +706,28 @@ export const DashboardPage: React.FC = () => {
                         )}
                       </div>
                       
-                      <div>
-                        <div className="flex items-center gap-3 mb-1">
-                          <h4 className="text-xl font-bold text-[#121212] dark:text-[#F4EFE6] tracking-tight">{rom.name}</h4>
-                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${getStatusColor(rom.status || 'draft')}`}>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-3 mb-1 flex-wrap">
+                          <h4 className="text-lg sm:text-xl font-bold text-[#121212] dark:text-[#F4EFE6] tracking-tight truncate">{rom.name}</h4>
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${getStatusColor(rom.status || 'draft')} shrink-0`}>
                             {rom.status || 'draft'}
                           </span>
                         </div>
-                        <div className="flex flex-wrap items-center gap-3 text-xs text-[#787567] dark:text-[#BDB8A4]">
-                          <span className="font-mono font-bold text-[#121212] dark:text-[#FDE694]">Android {rom.androidVersion}</span>
-                          <span className="w-1 h-1 rounded-full bg-[#EBE4CF] dark:bg-[#36342A]" />
-                          <span>v{rom.version}</span>
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-[#787567] dark:text-[#BDB8A4]">
+                          <span className="font-mono font-bold text-[#121212] dark:text-[#FDE694] shrink-0">Android {rom.androidVersion}</span>
+                          <span className="w-1 h-1 rounded-full bg-[#EBE4CF] dark:bg-[#36342A] shrink-0" />
+                          <span className="shrink-0">v{rom.version}</span>
                           {rom.maintainer && (
                             <>
-                              <span className="w-1 h-1 rounded-full bg-[#EBE4CF] dark:bg-[#36342A]" />
-                              <span>by <strong className="text-[#121212] dark:text-[#F4EFE6]">{rom.maintainer}</strong></span>
+                              <span className="w-1 h-1 rounded-full bg-[#EBE4CF] dark:bg-[#36342A] shrink-0" />
+                              <span className="truncate">by <strong className="text-[#121212] dark:text-[#F4EFE6]">{rom.maintainer}</strong></span>
                             </>
                           )}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
                       <Link 
                         to={`/admin/roms/${rom.id || rom.name}/edit`}
                         onMouseEnter={prefetchRomEditorPage}

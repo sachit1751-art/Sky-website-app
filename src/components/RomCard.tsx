@@ -340,7 +340,7 @@ export const RomCard: React.FC<RomCardProps> = memo(({
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.25, delay: 0.05 }}
-                      className="text-xs sm:text-sm text-[#787567] dark:text-[#BDB8A4] leading-relaxed bg-[#FFF8E1] dark:bg-[#12110D] p-4 rounded-2xl border border-[#EBE4CF] dark:border-[#36342A]"
+                      className="text-xs sm:text-sm text-[#787567] dark:text-[#BDB8A4] leading-relaxed bg-[#FFF8E1] dark:bg-[#12110D] p-4 rounded-2xl border border-[#EBE4CF] dark:border-[#36342A] break-words overflow-hidden min-w-0"
                     >
                       {rom.description}
                     </motion.p>
@@ -363,10 +363,10 @@ export const RomCard: React.FC<RomCardProps> = memo(({
                               delay: 0.08 + i * 0.04,
                               ease: [0.16, 1, 0.3, 1],
                             }}
-                            className="flex items-start gap-2 text-xs text-[#49473E] dark:text-[#F4EFE6] bg-[#FAF0CF]/40 dark:bg-[#25231C]/60 p-3 rounded-xl border border-[#EBE4CF] dark:border-[#36342A]"
+                            className="flex items-start gap-2 text-xs text-[#49473E] dark:text-[#F4EFE6] bg-[#FAF0CF]/40 dark:bg-[#25231C]/60 p-3 rounded-xl border border-[#EBE4CF] dark:border-[#36342A] min-w-0 break-words"
                           >
                             <span className="w-1.5 h-1.5 rounded-full bg-[#FDE694] mt-1.5 shrink-0" />
-                            <span>{item}</span>
+                            <span className="min-w-0 break-words">{item}</span>
                           </motion.div>
                         ))}
                       </div>

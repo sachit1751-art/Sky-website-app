@@ -70,8 +70,8 @@ project.
 Clone the repository:
 
 ``` bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-cd <PROJECT_DIRECTORY>
+git clone https://github.com/sky-roms/sky-website-app.git
+cd Sky-website-app
 ```
 
 Install dependencies:
@@ -92,10 +92,10 @@ Create a production build:
 npm run build
 ```
 
-Preview the production build:
+Start the production server:
 
 ``` bash
-npm run preview
+npm run start
 ```
 
 Follow the scripts defined in `package.json` if the project uses
@@ -124,9 +124,12 @@ A typical structure includes:
 
 ``` text
 .
-├── public/
-│   └── admins/
-├── src/
+├── api/                # Backend API (Supabase/Vercel)
+├── src/                # Frontend React application
+├── android/            # Capacitor Android project
+├── public/             # Static assets
+├── shared/             # Shared logic/constants
+├── capacitor.config.ts # Capacitor configuration
 ├── package.json
 ├── README.md
 └── ...
